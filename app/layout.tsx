@@ -1,9 +1,14 @@
 import type { Metadata } from 'next'
+import { Inter } from 'next/font/google'
 import './globals.css'
+import { Toaster } from 'sonner'
+import { AuthProvider } from '@/lib/context/auth-context'
+
+const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Resume AI',
-  description: 'AI-powered resume analysis and optimization tool. Get instant feedback on your resume and job matches.',
+  title: 'Resume Builder - Create ATS-optimized resumes',
+  description: 'Build professional, ATS-optimized resumes that get you noticed',
   openGraph: {
     images: ['/og-image.png'],
   },
@@ -18,7 +23,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className={inter.className}>
+        <AuthProvider>
+          {children}
+          <Toaster position="top-right" />
+        </AuthProvider>
+      </body>
     </html>
   )
 }

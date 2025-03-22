@@ -2,23 +2,35 @@
 
 import React, { useState, useEffect } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
 import { CircleIcon, ArrowLeft } from "lucide-react"
+import { toast } from "sonner"
+import { useAuth } from '@/lib/context/auth-context'
+
+// Define a type for the validation error format returned by Zod
+type ValidationErrors = {
+  [key: string]: {
+    _errors?: string[];
+  } | string | undefined;
+};
 
 export default function SignupPage() {
+  const router = useRouter()
+  const { register, isLoading: authLoading } = useAuth()
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
     confirmPassword: "",
   })
-  const [isLoading, setIsLoading] = useState(false)
   const [isVisible, setIsVisible] = useState(false)
-
+  const [error, setError] = useState<string | ValidationErrors>("")
+  
   // Animation on page load
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -31,17 +43,62 @@ export default function SignupPage() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
+    // Clear any error when user starts typing again
+    if (error) setError("")
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setIsLoading(true)
+    setError("")
 
-    // Simulate registration
-    setTimeout(() => {
-      setIsLoading(false)
-      window.location.href = "/dashboard"
-    }, 1500)
+    // Validate passwords match
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match")
+      return
+    }
+
+    // Validate password strength
+    if (formData.password.length < 8) {
+      setError("Password must be at least 8 characters long")
+      return
+    }
+
+    try {
+      await register(formData.name, formData.email, formData.password)
+      
+      // Show success toast
+      toast.success("Account created successfully!", {
+        description: "You can now log in with your credentials",
+      })
+      
+      // Router.push is handled inside the register function
+    } catch (err) {
+      console.error('Registration error:', err)
+      setError(err instanceof Error ? err.message : 'An error occurred during registration')
+      toast.error("Registration failed", {
+        description: err instanceof Error ? err.message : 'Please check your information and try again',
+      })
+    }
+  }
+
+  // Format and display errors
+  const getErrorMessage = (field: string): string | null => {
+    if (!error) return null;
+    if (typeof error === 'string') return null;
+
+    if (!error[field]) return null;
+
+    const fieldError = error[field];
+    
+    if (typeof fieldError === 'string') {
+      return fieldError;
+    }
+    
+    if (typeof fieldError === 'object' && fieldError && '_errors' in fieldError) {
+      return fieldError._errors?.join(', ') || null;
+    }
+    
+    return null;
   }
 
   return (
@@ -89,6 +146,9 @@ export default function SignupPage() {
                     required
                     className="rounded-lg border-blue-100 focus:border-blue-300 focus:ring-blue-300"
                   />
+                  {getErrorMessage('name') && (
+                    <p className="text-red-500 text-sm mt-1">{getErrorMessage('name')}</p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="email" className="text-gray-700">Email</Label>
@@ -102,6 +162,9 @@ export default function SignupPage() {
                     required
                     className="rounded-lg border-blue-100 focus:border-blue-300 focus:ring-blue-300"
                   />
+                  {getErrorMessage('email') && (
+                    <p className="text-red-500 text-sm mt-1">{getErrorMessage('email')}</p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="password" className="text-gray-700">Password</Label>
@@ -114,6 +177,9 @@ export default function SignupPage() {
                     required
                     className="rounded-lg border-blue-100 focus:border-blue-300 focus:ring-blue-300"
                   />
+                  {getErrorMessage('password') && (
+                    <p className="text-red-500 text-sm mt-1">{getErrorMessage('password')}</p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="confirmPassword" className="text-gray-700">Confirm Password</Label>
@@ -127,20 +193,18 @@ export default function SignupPage() {
                     className="rounded-lg border-blue-100 focus:border-blue-300 focus:ring-blue-300"
                   />
                 </div>
+
+                {typeof error === 'string' && error && (
+                  <div className="text-red-500 text-sm mt-2">{error}</div>
+                )}
+
                 <div className="flex items-center space-x-2 pt-2">
-                  <Checkbox id="terms" className="text-blue-600 focus:ring-blue-500" />
+                  <Checkbox id="terms" className="text-blue-600 focus:ring-blue-500" required />
                   <label
                     htmlFor="terms"
                     className="text-sm font-medium leading-none text-gray-600 peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
-                    I agree to the{" "}
-                    <Link href="/terms" className="text-blue-600 hover:text-blue-800 hover:underline">
-                      Terms of Service
-                    </Link>{" "}
-                    and{" "}
-                    <Link href="/privacy" className="text-blue-600 hover:text-blue-800 hover:underline">
-                      Privacy Policy
-                    </Link>
+                    I agree to the <Link href="/terms" className="text-blue-600 hover:underline">Terms of Service</Link> and <Link href="/privacy" className="text-blue-600 hover:underline">Privacy Policy</Link>
                   </label>
                 </div>
               </CardContent>
@@ -148,9 +212,9 @@ export default function SignupPage() {
                 <Button 
                   type="submit" 
                   className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-6 rounded-lg font-medium shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5" 
-                  disabled={isLoading}
+                  disabled={authLoading}
                 >
-                  {isLoading ? "Creating account..." : "Create Account"}
+                  {authLoading ? "Creating account..." : "Create Account"}
                 </Button>
                 <div className="text-center text-sm text-gray-600 mt-4">
                   Already have an account?{" "}

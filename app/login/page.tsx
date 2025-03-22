@@ -2,20 +2,25 @@
 
 import React, { useState, useEffect } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
 import { CircleIcon, ArrowLeft } from "lucide-react"
+import { toast } from "sonner"
+import { useAuth } from '@/lib/context/auth-context';
 
 export default function LoginPage() {
+  const router = useRouter()
+  const { login, error: authError, isLoading: authLoading } = useAuth()
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   })
-  const [isLoading, setIsLoading] = useState(false)
   const [isVisible, setIsVisible] = useState(false)
+  const [error, setError] = useState("")
 
   // Animation on page load
   useEffect(() => {
@@ -29,17 +34,30 @@ export default function LoginPage() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
+    // Clear any error when user starts typing again
+    if (error) setError("")
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setIsLoading(true)
+    setError("")
 
-    // Simulate login
-    setTimeout(() => {
-      setIsLoading(false)
-      window.location.href = "/dashboard"
-    }, 1500)
+    try {
+      await login(formData.email, formData.password)
+      
+      // Show success toast
+      toast.success("Login successful!", {
+        description: "Welcome back to Resume Builder",
+      })
+      
+      // Router.push is handled inside the login function
+    } catch (err) {
+      console.error('Login error:', err)
+      setError(err instanceof Error ? err.message : 'An error occurred during login')
+      toast.error("Login failed", {
+        description: err instanceof Error ? err.message : 'Please check your credentials and try again',
+      })
+    }
   }
 
   return (
@@ -106,6 +124,9 @@ export default function LoginPage() {
                     className="rounded-lg border-blue-100 focus:border-blue-300 focus:ring-blue-300"
                   />
                 </div>
+                {error && (
+                  <div className="text-red-500 text-sm mt-2">{error}</div>
+                )}
                 <div className="flex items-center space-x-2 pt-2">
                   <Checkbox id="remember" className="text-blue-600 focus:ring-blue-500" />
                   <label
@@ -120,9 +141,9 @@ export default function LoginPage() {
                 <Button 
                   type="submit" 
                   className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-6 rounded-lg font-medium shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5" 
-                  disabled={isLoading}
+                  disabled={authLoading}
                 >
-                  {isLoading ? "Signing in..." : "Sign In"}
+                  {authLoading ? "Signing in..." : "Sign In"}
                 </Button>
                 <div className="text-center text-sm text-gray-600 mt-4">
                   Don't have an account?{" "}

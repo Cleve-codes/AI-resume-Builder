@@ -1,0 +1,308 @@
+// schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User model for authentication and profile management
+model User {
+  id                String    @id @default(cuid())
+  email             String    @unique
+  password          String    // Hashed password
+  name              String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  
+  // Profile information
+  profileImage      String?
+  jobTitle          String?
+  location          String?
+  phone             String?
+  linkedinUrl       String?
+  websiteUrl        String?
+  
+  // Relations
+  resumes           Resume[]
+  jobDescriptions   JobDescription[]
+  analysisResults   AnalysisResult[]
+  
+  @@map("users")
+}
+
+// Resume model to store user resumes
+model Resume {
+  id                String    @id @default(cuid())
+  title             String
+  slug              String    @unique
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  lastExportedAt    DateTime?
+  isPublic          Boolean   @default(false)
+  version           Int       @default(1)
+  atsScore          Int?      // 0-100 score for ATS compatibility
+  
+  // Relations
+  userId            String
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  templateId        String?
+  template          Template? @relation(fields: [templateId], references: [id])
+  
+  // Resume content sections
+  contactInfo       ContactInfo?
+  summary           Summary?
+  experiences       Experience[]
+  educations        Education[]
+  skills            Skill[]
+  projects          Project[]
+  certifications    Certification[]
+  languages         Language[]
+  customSections    CustomSection[]
+  
+  // Analysis
+  analysisResults   AnalysisResult[]
+  
+  @@index([userId])
+  @@map("resumes")
+}
+
+// Resume template model
+model Template {
+  id                String    @id @default(cuid())
+  name              String
+  description       String?
+  category          String    // e.g., "Professional", "Creative", "Modern"
+  thumbnail         String?   // URL to template thumbnail
+  isDefault         Boolean   @default(false)
+  isPremium         Boolean   @default(false)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  
+  // Template configuration (stored as JSON)
+  config            Json      // Styling, layout, fonts, etc.
+  
+  // Relations
+  resumes           Resume[]
+  
+  @@map("templates")
+}
+
+// Contact information section
+model ContactInfo {
+  id                String    @id @default(cuid())
+  fullName          String
+  email             String
+  phone             String?
+  location          String?
+  linkedinUrl       String?
+  websiteUrl        String?
+  githubUrl         String?
+  otherUrls         Json?     // Additional URLs stored as JSON
+  
+  // Relations
+  resumeId          String    @unique
+  resume            Resume    @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  
+  @@map("contact_info")
+}
+
+// Professional summary section
+model Summary {
+  id                String    @id @default(cuid())
+  content           String    @db.Text
+  
+  // Relations
+  resumeId          String    @unique
+  resume            Resume    @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  
+  @@map("summaries")
+}
+
+// Work experience section
+model Experience {
+  id                String    @id @default(cuid())
+  title             String
+  company           String
+  location          String?
+  startDate         DateTime
+  endDate           DateTime?
+  isCurrentPosition Boolean   @default(false)
+  description       String    @db.Text
+  achievements      String[]
+  order             Int       @default(0)  // For ordering experiences
+  
+  // Relations
+  resumeId          String
+  resume            Resume    @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  
+  @@index([resumeId])
+  @@map("experiences")
+}
+
+// Education section
+model Education {
+  id                String    @id @default(cuid())
+  institution       String
+  degree            String
+  fieldOfStudy      String?
+  location          String?
+  startDate         DateTime
+  endDate           DateTime?
+  isCurrentlyStudying Boolean  @default(false)
+  gpa               String?
+  description       String?   @db.Text
+  achievements      String[]
+  order             Int       @default(0)  // For ordering education entries
+  
+  // Relations
+  resumeId          String
+  resume            Resume    @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  
+  @@index([resumeId])
+  @@map("education")
+}
+
+// Skills section
+model Skill {
+  id                String    @id @default(cuid())
+  category          String    // e.g., "Programming Languages", "Tools", "Soft Skills"
+  skills            String[]  // Array of skills in this category
+  order             Int       @default(0)  // For ordering skill categories
+  
+  // Relations
+  resumeId          String
+  resume            Resume    @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  
+  @@index([resumeId])
+  @@map("skills")
+}
+
+// Projects section
+model Project {
+  id                String    @id @default(cuid())
+  title             String
+  description       String    @db.Text
+  url               String?
+  startDate         DateTime?
+  endDate           DateTime?
+  isOngoing         Boolean   @default(false)
+  technologies      String[]
+  order             Int       @default(0)  // For ordering projects
+  
+  // Relations
+  resumeId          String
+  resume            Resume    @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  
+  @@index([resumeId])
+  @@map("projects")
+}
+
+// Certifications section
+model Certification {
+  id                String    @id @default(cuid())
+  name              String
+  issuer            String
+  issueDate         DateTime
+  expiryDate        DateTime?
+  credentialId      String?
+  credentialUrl     String?
+  order             Int       @default(0)  // For ordering certifications
+  
+  // Relations
+  resumeId          String
+  resume            Resume    @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  
+  @@index([resumeId])
+  @@map("certifications")
+}
+
+// Languages section
+model Language {
+  id                String    @id @default(cuid())
+  name              String
+  proficiency       String    // e.g., "Native", "Fluent", "Intermediate", "Basic"
+  order             Int       @default(0)  // For ordering languages
+  
+  // Relations
+  resumeId          String
+  resume            Resume    @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  
+  @@index([resumeId])
+  @@map("languages")
+}
+
+// Custom sections for flexibility
+model CustomSection {
+  id                String    @id @default(cuid())
+  title             String
+  content           String    @db.Text
+  order             Int       @default(0)  // For ordering custom sections
+  
+  // Relations
+  resumeId          String
+  resume            Resume    @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  
+  @@index([resumeId])
+  @@map("custom_sections")
+}
+
+// Job descriptions for AI analysis
+model JobDescription {
+  id                String    @id @default(cuid())
+  title             String
+  company           String?
+  description       String    @db.Text
+  url               String?
+  createdAt         DateTime  @default(now())
+  
+  // Relations
+  userId            String
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  analysisResults   AnalysisResult[]
+  
+  @@index([userId])
+  @@map("job_descriptions")
+}
+
+// AI analysis results
+model AnalysisResult {
+  id                String    @id @default(cuid())
+  score             Int       // Overall match score (0-100)
+  keywordMatch      Int       // Keyword match percentage (0-100)
+  missingKeywords   String[]  // Keywords from job description missing in resume
+  suggestions       String[]  // AI suggestions for improvement
+  strengths         String[]  // Resume strengths
+  improvements      String[]  // Areas that need improvement
+  rawAnalysis       Json?     // Raw AI analysis data
+  createdAt         DateTime  @default(now())
+  
+  // Relations
+  resumeId          String
+  resume            Resume    @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  jobDescriptionId  String
+  jobDescription    JobDescription @relation(fields: [jobDescriptionId], references: [id], onDelete: Cascade)
+  userId            String
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([resumeId])
+  @@index([jobDescriptionId])
+  @@index([userId])
+  @@map("analysis_results")
+}
+
+// For tracking user activity and analytics
+model UserActivity {
+  id                String    @id @default(cuid())
+  action            String    // e.g., "create_resume", "export_pdf", "analyze_resume"
+  metadata          Json?     // Additional data about the activity
+  createdAt         DateTime  @default(now())
+  
+  // Relations
+  userId            String
+  
+  @@index([userId])
+  @@map("user_activities")
+}

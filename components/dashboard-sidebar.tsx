@@ -1,17 +1,37 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import type React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { FileText, LayoutDashboard, FileUp, Briefcase, BarChart, Settings, HelpCircle, LogOut } from "lucide-react";
+import { FileText, LayoutDashboard, FileUp, Briefcase, BarChart, Settings, HelpCircle, LogOut, Menu, X, User } from "lucide-react";
+import { useAuth } from "@/lib/context/auth-context";
+import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 
 export default function DashboardSidebar() {
   const pathname = usePathname();
+  const { logout } = useAuth();
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
-  return (
-    <div className="w-64 border-r bg-gradient-to-b from-white to-blue-50 hidden md:block">
+  // Handle hydration mismatch
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      // The redirect is handled inside the logout function
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+
+  const SidebarContent = () => (
+    <>
       {/* Logo Section */}
       <div className="h-16 border-b flex items-center px-6">
         <Link href="/" className="flex items-center gap-2">
@@ -32,30 +52,42 @@ export default function DashboardSidebar() {
             icon={<LayoutDashboard className="h-5 w-5" />}
             label="Dashboard"
             active={pathname === "/dashboard"}
+            onClick={() => setIsMobileOpen(false)}
           />
           <NavItem
             href="/dashboard/resumes"
             icon={<FileText className="h-5 w-5" />}
             label="My Resumes"
             active={pathname.startsWith("/dashboard/resumes")}
+            onClick={() => setIsMobileOpen(false)}
+          />
+          <NavItem
+            href="/dashboard/profile"
+            icon={<User className="h-5 w-5" />}
+            label="My Profile"
+            active={pathname === "/dashboard/profile"}
+            onClick={() => setIsMobileOpen(false)}
           />
           <NavItem
             href="/dashboard/upload"
             icon={<FileUp className="h-5 w-5" />}
             label="Upload Resume"
             active={pathname === "/dashboard/upload"}
+            onClick={() => setIsMobileOpen(false)}
           />
           <NavItem
             href="/dashboard/jobs"
             icon={<Briefcase className="h-5 w-5" />}
             label="Job Matches"
             active={pathname.startsWith("/dashboard/jobs")}
+            onClick={() => setIsMobileOpen(false)}
           />
           <NavItem
             href="/dashboard/analytics"
             icon={<BarChart className="h-5 w-5" />}
             label="Analytics"
             active={pathname === "/dashboard/analytics"}
+            onClick={() => setIsMobileOpen(false)}
           />
         </nav>
 
@@ -67,16 +99,19 @@ export default function DashboardSidebar() {
               icon={<Settings className="h-5 w-5" />}
               label="Settings"
               active={pathname === "/dashboard/settings"}
+              onClick={() => setIsMobileOpen(false)}
             />
             <NavItem
               href="/dashboard/help"
               icon={<HelpCircle className="h-5 w-5" />}
               label="Help & Support"
               active={pathname === "/dashboard/help"}
+              onClick={() => setIsMobileOpen(false)}
             />
             <Button
               variant="ghost"
               className="w-full justify-start text-muted-foreground hover:text-foreground hover:bg-blue-50"
+              onClick={handleLogout}
             >
               <LogOut className="h-5 w-5 mr-3" />
               Log Out
@@ -84,7 +119,36 @@ export default function DashboardSidebar() {
           </nav>
         </div>
       </div>
-    </div>
+    </>
+  );
+
+  if (!isMounted) return null;
+
+  return (
+    <>
+      {/* Desktop Sidebar */}
+      <div className="w-64 border-r bg-gradient-to-b from-white to-blue-50 hidden md:block">
+        <SidebarContent />
+      </div>
+
+      {/* Mobile Menu Button */}
+      <div className="fixed bottom-4 right-4 z-50 md:hidden">
+        <Sheet open={isMobileOpen} onOpenChange={setIsMobileOpen}>
+          <SheetTrigger asChild>
+            <Button 
+              size="icon" 
+              className="bg-blue-600 hover:bg-blue-700 text-white rounded-full h-14 w-14 shadow-lg"
+            >
+              <Menu className="h-6 w-6" />
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left" className="p-0 w-[80%] max-w-[280px] bg-gradient-to-b from-white to-blue-50">
+            <SheetTitle className="sr-only">Dashboard Navigation</SheetTitle>
+            <SidebarContent />
+          </SheetContent>
+        </Sheet>
+      </div>
+    </>
   );
 }
 
@@ -93,14 +157,16 @@ function NavItem({
   icon,
   label,
   active,
+  onClick,
 }: {
   href: string;
   icon: React.ReactNode;
   label: string;
   active: boolean;
+  onClick?: () => void;
 }) {
   return (
-    <Link href={href}>
+    <Link href={href} onClick={onClick}>
       <Button
         variant="ghost"
         className={cn(

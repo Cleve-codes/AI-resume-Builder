@@ -1,63 +1,73 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 import { verify } from 'jsonwebtoken';
-import { UserService } from '@/lib/services/user-service';
+import { prisma } from '@/lib/prisma';
 
 export async function GET(request: NextRequest) {
+  console.log('[API] Checking authentication status');
+  
   try {
-    // Get the token from cookies
+    // Get the token from the request cookies
     const token = request.cookies.get('auth-token')?.value;
     
     if (!token) {
+      console.log('[API] No auth token found in cookies');
       return NextResponse.json(
-        { error: 'Unauthorized' },
+        { error: 'Not authenticated' },
         { status: 401 }
       );
     }
     
+    // Verify the token
+    console.log('[API] Verifying token');
+    let decoded;
     try {
-      // Verify and decode the token
-      const decoded = verify(token, process.env.NEXTAUTH_SECRET || 'fallback-secret');
-      const { id } = decoded as { id: string; email: string };
-      
-      try {
-        // Get the user from the database
-        const userService = new UserService();
-        const user = await userService.findUserById(id);
-        
-        if (!user) {
-          return NextResponse.json(
-            { error: 'User not found' },
-            { status: 404 }
-          );
-        }
-        
-        // Return the user without the password
-        const { password, ...userWithoutPassword } = user;
-        
-        return NextResponse.json({ user: userWithoutPassword });
-      } catch (dbError) {
-        console.error('Database error:', dbError);
-        return NextResponse.json(
-          { error: 'Database error', details: dbError instanceof Error ? dbError.message : 'Unknown database error' },
-          { status: 500 }
-        );
-      }
-    } catch (jwtError) {
-      console.error('JWT verification error:', jwtError);
+      decoded = verify(token, process.env.NEXTAUTH_SECRET || 'fallback-secret');
+    } catch (error) {
+      console.error('[API] Token verification failed:', error);
       return NextResponse.json(
-        { error: 'Invalid token', details: jwtError instanceof Error ? jwtError.message : 'Token verification failed' },
+        { error: 'Invalid token' },
         { status: 401 }
       );
     }
+    
+    // Get the user from the database
+    if (typeof decoded !== 'object' || !decoded.id) {
+      console.error('[API] Invalid token payload');
+      return NextResponse.json(
+        { error: 'Invalid token payload' },
+        { status: 401 }
+      );
+    }
+    
+    console.log('[API] Fetching user data for ID:', decoded.id);
+    const user = await prisma.user.findUnique({
+      where: { id: decoded.id },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        profileImage: true,
+        jobTitle: true,
+      },
+    });
+    
+    if (!user) {
+      console.error('[API] User not found');
+      return NextResponse.json(
+        { error: 'User not found' },
+        { status: 404 }
+      );
+    }
+    
+    console.log('[API] User authenticated successfully:', user.email);
+    return NextResponse.json({ user });
+    
   } catch (error) {
-    console.error('Get user error:', error);
+    console.error('[API] Authentication check error:', error);
     
     return NextResponse.json(
-      { 
-        error: 'An error occurred while fetching the user',
-        details: error instanceof Error ? error.message : 'Unknown error',
-        stack: error instanceof Error ? error.stack : undefined
-      },
+      { error: 'An error occurred during authentication check' },
       { status: 500 }
     );
   }

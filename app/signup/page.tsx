@@ -66,12 +66,13 @@ export default function SignupPage() {
     try {
       await register(formData.name, formData.email, formData.password)
       
-      // Show success toast
+      // Show success toast - may not be visible due to redirect
       toast.success("Account created successfully!", {
         description: "You can now log in with your credentials",
       })
       
-      // Router.push is handled inside the register function
+      // Redirection is handled inside the register function
+      // It will redirect to /login?registered=true
     } catch (err) {
       console.error('Registration error:', err)
       setError(err instanceof Error ? err.message : 'An error occurred during registration')

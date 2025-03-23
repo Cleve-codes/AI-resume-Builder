@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { UserService } from '@/lib/services/user-service';
 import { z } from 'zod';
-import { hash } from 'bcrypt';
+import { hash } from 'bcryptjs';
 import { prisma } from '@/lib/prisma';
 
 // Registration schema validation

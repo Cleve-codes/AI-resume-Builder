@@ -1,5 +1,5 @@
 import { prisma } from '../prisma';
-import { hash, compare } from 'bcrypt';
+import { hash, compare } from 'bcryptjs';
 
 export interface User {
   id: string;

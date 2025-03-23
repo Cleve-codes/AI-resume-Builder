@@ -2,19 +2,20 @@
 
 import React, { useState, useEffect } from "react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
-import { CircleIcon, ArrowLeft } from "lucide-react"
+import { CircleIcon, ArrowLeft, CheckCircle2Icon } from "lucide-react"
 import { toast } from "sonner"
 import { useAuth } from '@/lib/context/auth-context';
 
 export default function LoginPage() {
   const router = useRouter()
-  const { login, error: authError, isLoading: authLoading } = useAuth()
+  const searchParams = useSearchParams()
+  const { login, error: authError, isLoading: authLoading, user } = useAuth()
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -31,6 +32,26 @@ export default function LoginPage() {
     return () => clearTimeout(timer)
   }, [])
   
+  // Check if redirected from registration or if there's a callback URL
+  useEffect(() => {
+    const registered = searchParams.get('registered')
+    if (registered === 'true') {
+      toast.success("Registration successful!", {
+        description: "Please log in with your new account",
+        icon: <CheckCircle2Icon className="h-5 w-5 text-green-500" />,
+        duration: 5000,
+      })
+    }
+  }, [searchParams])
+  
+  // Handle direct navigation to dashboard if already logged in
+  useEffect(() => {
+    if (user) {
+      console.log('User already logged in, redirecting to dashboard')
+      window.location.href = '/dashboard'
+    }
+  }, [user])
+  
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
@@ -41,16 +62,21 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
+    
+    console.log('Login form submitted')
 
     try {
-      await login(formData.email, formData.password)
+      console.log('Attempting login...')
+      const result = await login(formData.email, formData.password)
+      console.log('Login successful, user:', result)
       
-      // Show success toast
+      // Success toast
       toast.success("Login successful!", {
         description: "Welcome back to Resume Builder",
       })
       
-      // Router.push is handled inside the login function
+      // The login function now handles redirection with window.location.href
+      console.log('Redirecting to dashboard...')
     } catch (err) {
       console.error('Login error:', err)
       setError(err instanceof Error ? err.message : 'An error occurred during login')

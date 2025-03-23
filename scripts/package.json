@@ -1,0 +1,13 @@
+{
+  "name": "api-test-scripts",
+  "version": "1.0.0",
+  "description": "Scripts for testing the Resume Builder API",
+  "main": "test-auth-api.js",
+  "scripts": {
+    "test-auth": "node test-auth-api.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "node-fetch": "^2.6.7"
+  }
+}

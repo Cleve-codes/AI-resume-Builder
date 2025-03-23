@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { verify } from 'jsonwebtoken';
+// Remove jsonwebtoken import which isn't compatible with Edge Runtime
+// import { verify } from 'jsonwebtoken';
 
 // Paths that require authentication
 const protectedPaths = [
@@ -18,8 +19,10 @@ const authPaths = [
 ];
 
 export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const { pathname, searchParams } = request.nextUrl;
   const token = request.cookies.get('auth-token')?.value;
+  
+  console.log(`[Middleware] Processing: ${pathname}, Token exists: ${!!token}`);
   
   // Check if the path is protected
   const isProtectedPath = protectedPaths.some(path => 
@@ -29,33 +32,41 @@ export function middleware(request: NextRequest) {
   // Check if the path is an auth path
   const isAuthPath = authPaths.some(path => pathname === path);
   
+  // Support for callback URLs for redirection after login
+  const callbackUrl = searchParams.get('callbackUrl');
+  
+  if (isProtectedPath) {
+    console.log(`[Middleware] Protected path detected: ${pathname}`);
+  }
+  
+  if (isAuthPath) {
+    console.log(`[Middleware] Auth path detected: ${pathname}`);
+  }
+  
   // If there's no token and the path is protected, redirect to login
   if (!token && isProtectedPath) {
+    console.log('[Middleware] No token, redirecting to login');
     const url = new URL('/login', request.url);
+    // Set a callback URL to redirect back after login
     url.searchParams.set('callbackUrl', encodeURI(pathname));
     return NextResponse.redirect(url);
   }
   
-  // If there's a token, verify it
+  // If there's a token, we'll consider it valid for middleware purposes
+  // The actual verification will happen server-side in the API routes
   if (token) {
-    try {
-      // Verify the token
-      verify(token, process.env.NEXTAUTH_SECRET || 'fallback-secret');
-      
-      // If token is valid and user is on an auth page, redirect to dashboard
-      if (isAuthPath) {
-        return NextResponse.redirect(new URL('/dashboard', request.url));
-      }
-    } catch (error) {
-      // If token verification fails, remove the invalid token
-      if (isProtectedPath) {
-        const response = NextResponse.redirect(new URL('/login', request.url));
-        response.cookies.delete('auth-token');
-        return response;
-      }
+    console.log('[Middleware] Token exists (assuming valid for middleware)');
+    
+    // If token exists and user is on an auth page, redirect to dashboard
+    // or to the callback URL if provided
+    if (isAuthPath) {
+      const redirectUrl = callbackUrl ? decodeURI(callbackUrl) : '/dashboard';
+      console.log(`[Middleware] Redirecting authenticated user to: ${redirectUrl}`);
+      return NextResponse.redirect(new URL(redirectUrl, request.url));
     }
   }
   
+  console.log('[Middleware] Continuing to requested route');
   return NextResponse.next();
 }
 

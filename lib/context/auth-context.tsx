@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 
 // Define the user type
 export interface User {
@@ -25,6 +25,24 @@ interface AuthContextType {
 // Create the auth context
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// List of routes that require authentication
+const protectedRoutes = [
+  '/dashboard',
+  '/resumes',
+  '/settings',
+  '/profile',
+];
+
+// List of routes that should never check auth status on load
+const publicRoutes = [
+  '/',
+  '/login',
+  '/signup',
+  '/about',
+  '/features',
+  '/pricing',
+];
+
 // Auth provider props
 interface AuthProviderProps {
   children: ReactNode;
@@ -35,11 +53,33 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [initialCheckDone, setInitialCheckDone] = useState<boolean>(false);
   const router = useRouter();
+  const pathname = usePathname();
 
-  // Check if the user is logged in on mount
+  // Check if the current route is a protected route
+  const isProtectedRoute = () => {
+    if (!pathname) return false;
+    return protectedRoutes.some(route => pathname.startsWith(route));
+  };
+
+  // Check if the current route is a public route
+  const isPublicRoute = () => {
+    if (!pathname) return false;
+    return publicRoutes.some(route => pathname === route);
+  };
+
+  // Check if the user is logged in on mount, but only for relevant routes
   useEffect(() => {
     const checkUserLoggedIn = async () => {
+      // Skip auth check for public routes on initial load
+      if (isPublicRoute() && !initialCheckDone) {
+        console.log('Skipping auth check for public route:', pathname);
+        setIsLoading(false);
+        setInitialCheckDone(true);
+        return;
+      }
+
       try {
         console.log('Checking user authentication status...');
         const res = await fetch('/api/auth/me');
@@ -47,7 +87,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
         
         if (!res.ok) {
           console.error(`Auth check failed with status ${res.status}`);
+          
+          // If on a protected route and not authenticated, redirect to login
+          if (isProtectedRoute()) {
+            router.push('/login');
+          }
+          
+          setUser(null);
           setIsLoading(false);
+          setInitialCheckDone(true);
           return;
         }
         
@@ -56,13 +104,22 @@ export function AuthProvider({ children }: AuthProviderProps) {
         setUser(data.user);
       } catch (err) {
         console.error('Failed to check authentication status:', err);
+        setUser(null);
+        
+        // If on a protected route, redirect to login on error
+        if (isProtectedRoute()) {
+          router.push('/login');
+        }
       } finally {
         setIsLoading(false);
+        setInitialCheckDone(true);
       }
     };
 
-    checkUserLoggedIn();
-  }, []);
+    if (!initialCheckDone || isProtectedRoute()) {
+      checkUserLoggedIn();
+    }
+  }, [pathname, initialCheckDone, router]);
 
   // Login function
   const login = async (email: string, password: string) => {
@@ -84,8 +141,22 @@ export function AuthProvider({ children }: AuthProviderProps) {
         throw new Error(data.error || 'Login failed');
       }
 
+      // Set user in state
       setUser(data.user);
-      router.push('/dashboard');
+      
+      // Get callback URL from URL parameters if it exists
+      const searchParams = new URLSearchParams(window.location.search);
+      const callbackUrl = searchParams.get('callbackUrl');
+      
+      console.log('Login successful, redirecting to', callbackUrl || '/dashboard');
+      
+      // Use window.location for most reliable redirection
+      const redirectUrl = callbackUrl ? decodeURIComponent(callbackUrl) : '/dashboard';
+      
+      // Force direct browser navigation for most reliable redirect
+      window.location.href = redirectUrl;
+      
+      return data.user;
     } catch (err) {
       console.error('Login error:', err);
       setError(err instanceof Error ? err.message : 'Failed to login');
@@ -115,8 +186,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
         throw new Error(data.error || 'Registration failed');
       }
 
-      // Navigate to login after successful registration
-      router.push('/login');
+      // Instead of automatically logging in, redirect to login page
+      // with a success message for better UX
+      router.push('/login?registered=true');
+      return data.user;
     } catch (err) {
       console.error('Registration error:', err);
       setError(err instanceof Error ? err.message : 'Failed to register');

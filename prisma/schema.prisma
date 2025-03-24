@@ -30,6 +30,10 @@ model User {
   linkedinUrl       String?
   websiteUrl        String?
   
+  // User roles and permissions
+  isAdmin           Boolean   @default(false)
+  isPremium         Boolean   @default(false)
+  
   // Relations
   resumes           Resume[]
   jobDescriptions   JobDescription[]
@@ -78,16 +82,14 @@ model Resume {
 model Template {
   id                String    @id @default(cuid())
   name              String
-  description       String?
-  category          String    // e.g., "Professional", "Creative", "Modern"
-  thumbnail         String?   // URL to template thumbnail
-  isDefault         Boolean   @default(false)
+  description       String
+  thumbnail         String    // URL to template thumbnail image
+  isActive          Boolean   @default(true)
   isPremium         Boolean   @default(false)
+  category          String    @default("professional") // e.g., professional, creative, minimal
+  structure         Json      // Template structure & styling information
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
-  
-  // Template configuration (stored as JSON)
-  config            Json      // Styling, layout, fonts, etc.
   
   // Relations
   resumes           Resume[]

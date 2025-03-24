@@ -7,6 +7,8 @@ import { headers } from 'next/headers';
 export interface JwtPayload {
   id: string;
   email: string;
+  isPremium?: boolean;
+  isAdmin?: boolean;
   iat: number;
   exp: number;
 }

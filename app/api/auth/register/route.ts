@@ -3,6 +3,8 @@ import { UserService } from '@/lib/services/user-service';
 import { z } from 'zod';
 import { hash } from 'bcryptjs';
 import { prisma } from '@/lib/prisma';
+import { randomBytes } from 'crypto';
+import { sendVerificationEmail } from '@/lib/email/email-service';
 
 // Registration schema validation
 const RegisterSchema = z.object({
@@ -10,6 +12,11 @@ const RegisterSchema = z.object({
   password: z.string().min(8, 'Password must be at least 8 characters'),
   name: z.string().optional(),
 });
+
+// Generate a verification token
+function generateVerificationToken(): string {
+  return randomBytes(32).toString('hex');
+}
 
 export async function POST(request: NextRequest) {
   console.log('Registration request received');
@@ -47,21 +54,37 @@ export async function POST(request: NextRequest) {
     // Hash the password directly
     const hashedPassword = await hash(password, 10);
     
+    // Generate verification token and set expiry (24 hours from now)
+    const verificationToken = generateVerificationToken();
+    const verificationTokenExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000);
+    
     // Create new user directly with Prisma
     const user = await prisma.user.create({
       data: {
         email,
         password: hashedPassword,
         name,
+        emailVerified: false,
+        verificationToken,
+        verificationTokenExpiry,
       },
     });
     
-    // Return the user without the password
-    const { password: _, ...userWithoutPassword } = user;
+    // Return the user without the password and sensitive verification data
+    const { password: _, verificationToken: __, verificationTokenExpiry: ___, ...userWithoutSensitiveData } = user;
+    
+    // Send verification email
+    try {
+      await sendVerificationEmail(email, verificationToken);
+      console.log('Verification email sent successfully');
+    } catch (emailError) {
+      console.error('Failed to send verification email:', emailError);
+      // We still create the user, but log the email failure
+    }
     
     console.log('User created successfully');
     return NextResponse.json(
-      { message: 'User created successfully', user: userWithoutPassword },
+      { message: 'User created successfully. Please verify your email.', user: userWithoutSensitiveData },
       { status: 201 }
     );
   } catch (error) {

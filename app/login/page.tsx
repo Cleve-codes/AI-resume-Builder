@@ -47,10 +47,17 @@ export default function LoginPage() {
   // Handle direct navigation to dashboard if already logged in
   useEffect(() => {
     if (user) {
-      console.log('User already logged in, redirecting to dashboard')
-      window.location.href = '/dashboard'
+      // Check if email is verified
+      if (!user.emailVerified) {
+        console.log('User email not verified, redirecting to verification page');
+        router.push('/verify-email?email=' + encodeURIComponent(user.email));
+        return;
+      }
+      
+      console.log('User already logged in, redirecting to dashboard');
+      window.location.href = '/dashboard';
     }
-  }, [user])
+  }, [user, router]);
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -59,30 +66,32 @@ export default function LoginPage() {
     if (error) setError("")
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setError("")
-    
-    console.log('Login form submitted')
+
+    if (!formData.email || !formData.password) {
+      setError("Please fill in all fields")
+      return
+    }
 
     try {
-      console.log('Attempting login...')
-      const result = await login(formData.email, formData.password)
-      console.log('Login successful, user:', result)
-      
-      // Success toast
-      toast.success("Login successful!", {
-        description: "Welcome back to Resume Builder",
-      })
-      
-      // The login function now handles redirection with window.location.href
-      console.log('Redirecting to dashboard...')
+      await login(formData.email, formData.password)
+      // Note: The auth context will now handle redirection based on email verification status
     } catch (err) {
       console.error('Login error:', err)
-      setError(err instanceof Error ? err.message : 'An error occurred during login')
-      toast.error("Login failed", {
-        description: err instanceof Error ? err.message : 'Please check your credentials and try again',
-      })
+      if (err instanceof Error && err.message.includes('not verified')) {
+        setError("Email not verified. Please check your inbox or request a new verification email.")
+        toast.error("Email not verified", {
+          description: "Please check your inbox or request a new verification email",
+          action: {
+            label: "Verify Now",
+            onClick: () => router.push(`/verify-email?email=${encodeURIComponent(formData.email)}`),
+          },
+        })
+      } else {
+        setError(err instanceof Error ? err.message : "Failed to login")
+      }
     }
   }
 
@@ -118,7 +127,7 @@ export default function LoginPage() {
               <CardTitle className="text-2xl font-bold">Welcome back</CardTitle>
               <CardDescription>Sign in to your Resume Builder account</CardDescription>
             </CardHeader>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleLogin}>
               <CardContent className="space-y-5">
                 <div className="space-y-2">
                   <Label htmlFor="email" className="text-gray-700">Email</Label>

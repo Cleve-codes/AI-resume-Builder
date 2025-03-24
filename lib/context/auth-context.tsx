@@ -10,6 +10,7 @@ export interface User {
   name: string | null;
   profileImage: string | null;
   jobTitle: string | null;
+  emailVerified: boolean;
 }
 
 // Define the auth context shape
@@ -19,6 +20,8 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   register: (name: string, email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  resendVerification: (email: string) => Promise<void>;
+  verifyEmail: (token: string) => Promise<void>;
   error: string | null;
 }
 
@@ -101,6 +104,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
         
         const data = await res.json();
         console.log('Auth check successful, user data received');
+        
+        // Check if email is verified for protected routes
+        if (isProtectedRoute() && !data.user.emailVerified) {
+          console.log('User email not verified, redirecting to verification page');
+          router.push('/verify-email?email=' + encodeURIComponent(data.user.email));
+          setUser(data.user);
+          setIsLoading(false);
+          setInitialCheckDone(true);
+          return;
+        }
+        
         setUser(data.user);
       } catch (err) {
         console.error('Failed to check authentication status:', err);
@@ -186,13 +200,80 @@ export function AuthProvider({ children }: AuthProviderProps) {
         throw new Error(data.error || 'Registration failed');
       }
 
-      // Instead of automatically logging in, redirect to login page
-      // with a success message for better UX
-      router.push('/login?registered=true');
+      // Redirect to verify email page instead of login
+      router.push('/verify-email?email=' + encodeURIComponent(email));
       return data.user;
     } catch (err) {
       console.error('Registration error:', err);
       setError(err instanceof Error ? err.message : 'Failed to register');
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Resend verification email function
+  const resendVerification = async (email: string) => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const res = await fetch('/api/auth/resend-verification', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to resend verification email');
+      }
+
+      return data;
+    } catch (err) {
+      console.error('Resend verification error:', err);
+      setError(err instanceof Error ? err.message : 'Failed to resend verification email');
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Verify email function
+  const verifyEmail = async (token: string) => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const res = await fetch('/api/auth/verify-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ token }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to verify email');
+      }
+
+      // If user is already logged in, update their state
+      if (user) {
+        setUser({
+          ...user,
+          emailVerified: true
+        });
+      }
+
+      return data;
+    } catch (err) {
+      console.error('Email verification error:', err);
+      setError(err instanceof Error ? err.message : 'Failed to verify email');
       throw err;
     } finally {
       setIsLoading(false);
@@ -219,7 +300,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, register, logout, error }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      isLoading, 
+      login, 
+      register, 
+      logout, 
+      resendVerification,
+      verifyEmail,
+      error 
+    }}>
       {children}
     </AuthContext.Provider>
   );

@@ -15,6 +15,8 @@ import {
   Globe,
   Linkedin,
   Github,
+  Save,
+  Loader2
 } from "lucide-react"
 
 interface PersonalInfoFormProps {
@@ -36,142 +38,154 @@ interface PersonalInfoFormProps {
 
 export function PersonalInfoForm({ profile, isUpdating, onProfileChange, onSubmit }: PersonalInfoFormProps) {
   return (
-    <Card className="border-blue-100 shadow-sm hover:shadow-md transition-shadow">
-      <CardHeader className="border-b border-blue-50">
-        <CardTitle className="text-blue-700">Personal Information</CardTitle>
+    <Card className="border-border shadow-sm overflow-hidden">
+      <CardHeader className="bg-gradient-to-r from-primary/5 to-transparent border-b">
+        <CardTitle className="flex items-center gap-2">
+          <User className="h-5 w-5 text-primary" /> Personal Information
+        </CardTitle>
         <CardDescription>Update your personal information and contact details</CardDescription>
       </CardHeader>
       <form onSubmit={onSubmit}>
         <CardContent className="space-y-4 pt-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="name" className="text-blue-700">Full Name</Label>
+              <Label htmlFor="name">Full Name</Label>
               <div className="relative">
-                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-blue-500" />
+                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-primary" />
                 <Input
                   id="name"
                   name="name"
                   value={profile.name}
                   onChange={onProfileChange}
-                  className="pl-10 border-blue-100 focus:border-blue-300 focus:ring-blue-200"
+                  className="pl-10"
                 />
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-blue-700">Email</Label>
+              <Label htmlFor="email">Email</Label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-blue-500" />
+                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-primary" />
                 <Input
                   id="email"
                   name="email"
                   type="email"
                   value={profile.email}
                   onChange={onProfileChange}
-                  className="pl-10 border-blue-100 focus:border-blue-300 focus:ring-blue-200"
+                  className="pl-10"
                 />
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="jobTitle" className="text-blue-700">Job Title</Label>
+              <Label htmlFor="jobTitle">Job Title</Label>
               <div className="relative">
-                <Briefcase className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-blue-500" />
+                <Briefcase className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-primary" />
                 <Input
                   id="jobTitle"
                   name="jobTitle"
                   value={profile.jobTitle}
                   onChange={onProfileChange}
-                  className="pl-10 border-blue-100 focus:border-blue-300 focus:ring-blue-200"
+                  className="pl-10"
                 />
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="location" className="text-blue-700">Location</Label>
+              <Label htmlFor="location">Location</Label>
               <div className="relative">
-                <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-blue-500" />
+                <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-primary" />
                 <Input
                   id="location"
                   name="location"
                   value={profile.location}
                   onChange={onProfileChange}
-                  className="pl-10 border-blue-100 focus:border-blue-300 focus:ring-blue-200"
+                  className="pl-10"
                 />
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="phone" className="text-blue-700">Phone</Label>
+              <Label htmlFor="phone">Phone</Label>
               <div className="relative">
-                <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-blue-500" />
+                <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-primary" />
                 <Input
                   id="phone"
                   name="phone"
                   value={profile.phone}
                   onChange={onProfileChange}
-                  className="pl-10 border-blue-100 focus:border-blue-300 focus:ring-blue-200"
+                  className="pl-10"
                 />
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="websiteUrl" className="text-blue-700">Website</Label>
+              <Label htmlFor="websiteUrl">Website</Label>
               <div className="relative">
-                <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-blue-500" />
+                <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-primary" />
                 <Input
                   id="websiteUrl"
                   name="websiteUrl"
                   value={profile.websiteUrl}
                   onChange={onProfileChange}
-                  className="pl-10 border-blue-100 focus:border-blue-300 focus:ring-blue-200"
+                  className="pl-10"
                 />
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="linkedinUrl" className="text-blue-700">LinkedIn</Label>
+              <Label htmlFor="linkedinUrl">LinkedIn</Label>
               <div className="relative">
-                <Linkedin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-blue-500" />
+                <Linkedin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-primary" />
                 <Input
                   id="linkedinUrl"
                   name="linkedinUrl"
                   value={profile.linkedinUrl}
                   onChange={onProfileChange}
-                  className="pl-10 border-blue-100 focus:border-blue-300 focus:ring-blue-200"
+                  className="pl-10"
                 />
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="githubUrl" className="text-blue-700">GitHub</Label>
+              <Label htmlFor="githubUrl">GitHub</Label>
               <div className="relative">
-                <Github className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-blue-500" />
+                <Github className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-primary" />
                 <Input
                   id="githubUrl"
                   name="githubUrl"
                   value={profile.githubUrl}
                   onChange={onProfileChange}
-                  className="pl-10 border-blue-100 focus:border-blue-300 focus:ring-blue-200"
+                  className="pl-10"
                 />
               </div>
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="bio" className="text-blue-700">Professional Bio</Label>
+            <Label htmlFor="bio">Professional Bio</Label>
             <Textarea
               id="bio"
               name="bio"
               value={profile.bio}
               onChange={onProfileChange}
-              className="min-h-[100px] border-blue-100 focus:border-blue-300 focus:ring-blue-200"
+              className="min-h-[100px]"
             />
             <p className="text-xs text-muted-foreground">
               A brief description of your professional background and expertise.
             </p>
           </div>
         </CardContent>
-        <CardFooter className="border-t border-blue-50 bg-blue-50/50">
+        <CardFooter className="border-t bg-muted/20">
           <Button 
             type="submit" 
             disabled={isUpdating} 
-            className="bg-blue-600 hover:bg-blue-700 text-white transition-colors"
+            className="bg-primary hover:bg-primary/90 text-white transition-colors"
           >
-            {isUpdating ? "Saving..." : "Save Changes"}
+            {isUpdating ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              <>
+                <Save className="mr-2 h-4 w-4" />
+                Save Changes
+              </>
+            )}
           </Button>
         </CardFooter>
       </form>

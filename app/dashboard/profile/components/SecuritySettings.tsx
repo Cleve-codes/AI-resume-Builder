@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
-import { Lock, Shield, LogOut } from "lucide-react"
+import { Lock, Shield, LogOut, KeyRound, Loader2 } from "lucide-react"
 
 interface SecuritySettingsProps {
   passwordData: {
@@ -27,40 +27,40 @@ export function SecuritySettings({
   onSubmit,
 }: SecuritySettingsProps) {
   return (
-    <Card className="border-blue-100 shadow-sm hover:shadow-md transition-shadow">
-      <CardHeader className="border-b border-blue-50">
-        <CardTitle className="text-blue-700 flex items-center gap-2">
-          <Shield className="h-5 w-5 text-blue-500" /> Security Settings
+    <Card className="border-border shadow-sm overflow-hidden">
+      <CardHeader className="bg-gradient-to-r from-primary/5 to-transparent border-b">
+        <CardTitle className="flex items-center gap-2">
+          <Shield className="h-5 w-5 text-primary" /> Security Settings
         </CardTitle>
         <CardDescription>Manage your password and account security</CardDescription>
       </CardHeader>
       <form onSubmit={onSubmit}>
         <CardContent className="space-y-4 pt-6">
           <div className="space-y-2">
-            <Label htmlFor="currentPassword" className="text-blue-700">Current Password</Label>
+            <Label htmlFor="currentPassword">Current Password</Label>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-blue-500" />
+              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-primary" />
               <Input
                 id="currentPassword"
                 name="currentPassword"
                 type="password"
                 value={passwordData.currentPassword}
                 onChange={onPasswordChange}
-                className="pl-10 border-blue-100 focus:border-blue-300 focus:ring-blue-200"
+                className="pl-10"
               />
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="newPassword" className="text-blue-700">New Password</Label>
+            <Label htmlFor="newPassword">New Password</Label>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-blue-500" />
+              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-primary" />
               <Input
                 id="newPassword"
                 name="newPassword"
                 type="password"
                 value={passwordData.newPassword}
                 onChange={onPasswordChange}
-                className="pl-10 border-blue-100 focus:border-blue-300 focus:ring-blue-200"
+                className="pl-10"
               />
             </div>
             <p className="text-xs text-muted-foreground">
@@ -68,24 +68,26 @@ export function SecuritySettings({
             </p>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="confirmPassword" className="text-blue-700">Confirm New Password</Label>
+            <Label htmlFor="confirmPassword">Confirm New Password</Label>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-blue-500" />
+              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-primary" />
               <Input
                 id="confirmPassword"
                 name="confirmPassword"
                 type="password"
                 value={passwordData.confirmPassword}
                 onChange={onPasswordChange}
-                className="pl-10 border-blue-100 focus:border-blue-300 focus:ring-blue-200"
+                className="pl-10"
               />
             </div>
           </div>
 
-          <Separator className="bg-blue-100" />
+          <Separator />
 
           <div>
-            <h3 className="text-sm font-medium mb-3 text-blue-700">Two-Factor Authentication</h3>
+            <h3 className="text-sm font-medium mb-3 flex items-center gap-2 text-primary">
+              <Shield className="h-4 w-4" /> Two-Factor Authentication
+            </h3>
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm">Protect your account with 2FA</p>
@@ -93,18 +95,20 @@ export function SecuritySettings({
                   Add an extra layer of security to your account
                 </p>
               </div>
-              <Button variant="outline" className="border-blue-100 hover:bg-blue-50 hover:text-blue-600 transition-colors">
+              <Button variant="outline" className="border-primary/20 hover:bg-primary/5 hover:text-primary transition-colors">
                 Enable 2FA
               </Button>
             </div>
           </div>
 
-          <Separator className="bg-blue-100" />
+          <Separator />
 
           <div>
-            <h3 className="text-sm font-medium mb-3 text-blue-700">Account Sessions</h3>
+            <h3 className="text-sm font-medium mb-3 flex items-center gap-2 text-primary">
+              <LogOut className="h-4 w-4" /> Account Sessions
+            </h3>
             <div className="space-y-3">
-              <div className="flex items-center justify-between bg-blue-50 p-3 rounded-md border border-blue-100">
+              <div className="flex items-center justify-between bg-muted/50 p-3 rounded-md border border-border">
                 <div>
                   <p className="text-sm font-medium">Current Session</p>
                   <p className="text-xs text-muted-foreground">San Francisco, CA • Chrome on macOS</p>
@@ -113,20 +117,30 @@ export function SecuritySettings({
               </div>
               <Button 
                 variant="outline" 
-                className="w-full border-blue-100 hover:bg-blue-50 hover:text-blue-600 transition-colors flex items-center justify-center gap-2"
+                className="w-full border-primary/20 hover:bg-primary/5 hover:text-primary transition-colors flex items-center justify-center gap-2"
               >
                 <LogOut className="h-4 w-4" /> Logout of All Sessions
               </Button>
             </div>
           </div>
         </CardContent>
-        <CardFooter className="border-t border-blue-50 bg-blue-50/50">
+        <CardFooter className="border-t bg-muted/20">
           <Button 
             type="submit" 
             disabled={isUpdating}
-            className="bg-blue-600 hover:bg-blue-700 text-white transition-colors"
+            className="bg-primary hover:bg-primary/90 text-white transition-colors"
           >
-            {isUpdating ? "Updating..." : "Change Password"}
+            {isUpdating ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Updating...
+              </>
+            ) : (
+              <>
+                <KeyRound className="mr-2 h-4 w-4" />
+                Change Password
+              </>
+            )}
           </Button>
         </CardFooter>
       </form>

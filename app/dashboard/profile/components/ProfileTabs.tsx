@@ -1,14 +1,21 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { User, Shield, Bell, CreditCard } from "lucide-react"
+import { UserCircle, Shield, Bell, CreditCard, Save, Loader2 } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Button } from "@/components/ui/button"
 import { PersonalInfoForm } from "./PersonalInfoForm"
 import { SecuritySettings } from "./SecuritySettings"
 import { NotificationSettings } from "./NotificationSettings"
 import { PrivacySettings } from "./PrivacySettings"
 import { BillingInformation } from "./BillingInformation"
 import { UserProfile, UserSettings } from "../hooks/useProfilePage"
+
+// Animation variants
+const fadeInUp = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } },
+}
 
 interface ProfileTabsProps {
   activeTab: string
@@ -45,34 +52,29 @@ export function ProfileTabs({
   onPasswordSubmit,
   onSettingsSubmit
 }: ProfileTabsProps) {
-  const fadeInUp = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-  }
-
   return (
     <motion.div initial="hidden" animate="visible" variants={fadeInUp} className="w-full">
       <Tabs value={activeTab} onValueChange={onTabChange} className="w-full">
-        <TabsList className="mb-6 grid grid-cols-4 md:w-auto">
-          <TabsTrigger value="personal">
-            <User className="mr-2 h-4 w-4 hidden md:inline" />
+        <TabsList className="mb-6 grid grid-cols-4 md:w-auto bg-muted/60 p-1 rounded-md">
+          <TabsTrigger value="personal" className="data-[state=active]:bg-white data-[state=active]:shadow-sm transition-all">
+            <UserCircle className="mr-2 h-4 w-4 text-primary" />
             Personal Info
           </TabsTrigger>
-          <TabsTrigger value="security">
-            <Shield className="mr-2 h-4 w-4 hidden md:inline" />
+          <TabsTrigger value="security" className="data-[state=active]:bg-white data-[state=active]:shadow-sm transition-all">
+            <Shield className="mr-2 h-4 w-4 text-primary" />
             Security
           </TabsTrigger>
-          <TabsTrigger value="preferences">
-            <Bell className="mr-2 h-4 w-4 hidden md:inline" />
+          <TabsTrigger value="preferences" className="data-[state=active]:bg-white data-[state=active]:shadow-sm transition-all">
+            <Bell className="mr-2 h-4 w-4 text-primary" />
             Preferences
           </TabsTrigger>
-          <TabsTrigger value="billing">
-            <CreditCard className="mr-2 h-4 w-4 hidden md:inline" />
+          <TabsTrigger value="billing" className="data-[state=active]:bg-white data-[state=active]:shadow-sm transition-all">
+            <CreditCard className="mr-2 h-4 w-4 text-primary" />
             Billing
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="personal" className="mt-0">
+        <TabsContent value="personal" className="mt-0 animate-in fade-in-50 zoom-in-95 duration-200">
           <PersonalInfoForm
             profile={{
               name: profile.name,
@@ -91,7 +93,7 @@ export function ProfileTabs({
           />
         </TabsContent>
 
-        <TabsContent value="security" className="mt-0">
+        <TabsContent value="security" className="mt-0 animate-in fade-in-50 zoom-in-95 duration-200">
           <SecuritySettings
             passwordData={passwordData}
             isUpdating={isUpdating}
@@ -100,7 +102,7 @@ export function ProfileTabs({
           />
         </TabsContent>
 
-        <TabsContent value="preferences" className="mt-0">
+        <TabsContent value="preferences" className="mt-0 animate-in fade-in-50 zoom-in-95 duration-200">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
             <NotificationSettings
               notifications={settings.notifications}
@@ -111,18 +113,28 @@ export function ProfileTabs({
               onPrivacyChange={onPrivacyChange}
             />
           </div>
-          <div className="mt-4 flex justify-end">
-            <button
+          <div className="mt-6 flex justify-end">
+            <Button
               onClick={onSettingsSubmit}
               disabled={isUpdating}
-              className="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-md text-sm font-medium disabled:opacity-50"
+              className="bg-primary hover:bg-primary/90 text-white transition-all"
             >
-              {isUpdating ? "Saving..." : "Save Preferences"}
-            </button>
+              {isUpdating ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <Save className="mr-2 h-4 w-4" />
+                  Save Preferences
+                </>
+              )}
+            </Button>
           </div>
         </TabsContent>
 
-        <TabsContent value="billing" className="mt-0">
+        <TabsContent value="billing" className="mt-0 animate-in fade-in-50 zoom-in-95 duration-200">
           <BillingInformation />
         </TabsContent>
       </Tabs>

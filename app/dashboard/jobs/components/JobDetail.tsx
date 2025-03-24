@@ -4,7 +4,7 @@ import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import {
   Building,
@@ -21,30 +21,23 @@ import {
   Send,
   BarChart,
 } from "lucide-react"
+import { Job } from "../types"
 
 // Animation variants
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } },
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: { 
+    opacity: 1,
+    transition: {
+      when: "beforeChildren",
+      staggerChildren: 0.1
+    }
+  }
 }
 
-interface Job {
-  id: number
-  title: string
-  company: string
-  location: string
-  type: "full-time" | "part-time" | "contract" | "remote"
-  salary: string
-  posted: string
-  description: string
-  requirements: string[]
-  matchScore: number
-  skills: {
-    matching: string[]
-    missing: string[]
-  }
-  saved: boolean
-  applied: boolean
+const itemVariants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } },
 }
 
 interface JobDetailProps {
@@ -71,13 +64,17 @@ export function JobDetail({ job, onSave, onApply }: JobDetailProps) {
   }
 
   return (
-    <motion.div variants={itemVariants}>
-      <Card>
-        <CardHeader className="pb-3">
+    <motion.div
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+    >
+      <Card className="border shadow-sm">
+        <CardHeader className="bg-gradient-to-r from-primary/5 to-transparent border-b pb-4">
           <div className="flex justify-between items-start">
             <div>
               <CardTitle className="text-xl mb-1">{job.title}</CardTitle>
-              <div className="flex flex-wrap gap-y-2 text-sm text-muted-foreground">
+              <CardDescription className="flex flex-wrap gap-y-2 text-sm">
                 <div className="flex items-center gap-1 mr-4">
                   <Building className="h-3.5 w-3.5" />
                   <span>{job.company}</span>
@@ -88,7 +85,7 @@ export function JobDetail({ job, onSave, onApply }: JobDetailProps) {
                 </div>
                 <div className="flex items-center gap-1 mr-4">
                   <Calendar className="h-3.5 w-3.5" />
-                  <span>{job.posted}</span>
+                  <span>Posted {job.posted}</span>
                 </div>
                 <div className="flex items-center gap-1 mr-4">
                   <DollarSign className="h-3.5 w-3.5" />
@@ -96,9 +93,9 @@ export function JobDetail({ job, onSave, onApply }: JobDetailProps) {
                 </div>
                 <div className="flex items-center gap-1">
                   <Clock className="h-3.5 w-3.5" />
-                  <span>{job.type.replace("-", " ")}</span>
+                  <span className="capitalize">{job.type.replace("-", " ")}</span>
                 </div>
-              </div>
+              </CardDescription>
             </div>
             <Badge
               className={`${getMatchScoreBgColor(job.matchScore)} text-white border-none`}
@@ -107,9 +104,9 @@ export function JobDetail({ job, onSave, onApply }: JobDetailProps) {
             </Badge>
           </div>
         </CardHeader>
-        <CardContent>
-          <div className="space-y-6">
-            <div className="flex gap-2">
+        <CardContent className="pt-6">
+          <motion.div className="space-y-6" variants={containerVariants}>
+            <motion.div className="flex gap-2" variants={itemVariants}>
               <Button
                 variant={job.saved ? "default" : "outline"}
                 className="flex-1 gap-1"
@@ -126,14 +123,13 @@ export function JobDetail({ job, onSave, onApply }: JobDetailProps) {
                 )}
               </Button>
               <Button
-                variant={job.applied ? "default" : "outline"}
                 className="flex-1 gap-1"
                 disabled={job.applied}
                 onClick={onApply}
               >
                 {job.applied ? (
                   <>
-                    <Send className="h-4 w-4" /> Applied
+                    <CheckCircle className="h-4 w-4" /> Applied
                   </>
                 ) : (
                   <>
@@ -141,16 +137,16 @@ export function JobDetail({ job, onSave, onApply }: JobDetailProps) {
                   </>
                 )}
               </Button>
-            </div>
+            </motion.div>
 
             <Separator />
 
-            <div>
+            <motion.div variants={itemVariants}>
               <h3 className="font-medium mb-2">Job Description</h3>
               <p className="text-sm text-muted-foreground whitespace-pre-line">{job.description}</p>
-            </div>
+            </motion.div>
 
-            <div>
+            <motion.div variants={itemVariants}>
               <h3 className="font-medium mb-2">Requirements</h3>
               <ul className="text-sm text-muted-foreground space-y-1">
                 {job.requirements.map((req, index) => (
@@ -160,19 +156,31 @@ export function JobDetail({ job, onSave, onApply }: JobDetailProps) {
                   </li>
                 ))}
               </ul>
-            </div>
+            </motion.div>
 
             <Separator />
 
-            <div>
-              <h3 className="font-medium mb-3">Skills Match</h3>
+            <motion.div variants={itemVariants}>
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="font-medium">Skills Match</h3>
+                <div className="w-1/2">
+                  <div className="flex justify-between items-center mb-1 text-xs">
+                    <span>Match Score</span>
+                    <span className={getMatchScoreColor(job.matchScore)}>
+                      {job.matchScore}%
+                    </span>
+                  </div>
+                  <Progress
+                    value={job.matchScore}
+                    className={`h-1.5 ${getMatchScoreBgColor(job.matchScore)}`}
+                  />
+                </div>
+              </div>
               <div className="space-y-4">
                 <div>
-                  <div className="flex justify-between items-center mb-1">
-                    <div className="flex items-center gap-1 text-sm">
-                      <CheckCircle className="h-3.5 w-3.5 text-green-500" />
-                      <span>Matching Skills</span>
-                    </div>
+                  <div className="flex items-center gap-1 text-sm mb-2">
+                    <CheckCircle className="h-3.5 w-3.5 text-green-500" />
+                    <span>Matching Skills</span>
                   </div>
                   <div className="flex flex-wrap gap-1">
                     {job.skills.matching.map((skill, index) => (
@@ -189,11 +197,9 @@ export function JobDetail({ job, onSave, onApply }: JobDetailProps) {
 
                 {job.skills.missing.length > 0 && (
                   <div>
-                    <div className="flex justify-between items-center mb-1">
-                      <div className="flex items-center gap-1 text-sm">
-                        <AlertCircle className="h-3.5 w-3.5 text-amber-500" />
-                        <span>Skills to Develop</span>
-                      </div>
+                    <div className="flex items-center gap-1 text-sm mb-2">
+                      <AlertCircle className="h-3.5 w-3.5 text-amber-500" />
+                      <span>Skills to Develop</span>
                     </div>
                     <div className="flex flex-wrap gap-1">
                       {job.skills.missing.map((skill, index) => (
@@ -209,9 +215,9 @@ export function JobDetail({ job, onSave, onApply }: JobDetailProps) {
                   </div>
                 )}
               </div>
-            </div>
+            </motion.div>
 
-            <div className="bg-primary/5 p-4 rounded-md border border-primary/20">
+            <motion.div className="bg-primary/5 p-4 rounded-md border border-primary/20" variants={itemVariants}>
               <h3 className="font-medium mb-2 flex items-center gap-2">
                 <Zap className="h-4 w-4 text-primary" /> AI Recommendation
               </h3>
@@ -222,15 +228,17 @@ export function JobDetail({ job, onSave, onApply }: JobDetailProps) {
               <Button variant="outline" className="w-full gap-2">
                 <BarChart className="h-4 w-4" /> View Full Match Analysis
               </Button>
-            </div>
-
-            <div className="flex justify-center">
-              <Button variant="outline" size="sm" className="gap-1">
-                <ExternalLink className="h-3.5 w-3.5" /> View on Company Website
-              </Button>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </CardContent>
+        <CardFooter className="border-t py-4 flex gap-2 justify-center">
+          <Button variant="outline" className="gap-1">
+            <ExternalLink className="h-3.5 w-3.5" /> View on Company Website
+          </Button>
+          <Button variant="outline" className="gap-1">
+            <Send className="h-3.5 w-3.5" /> Email to a Friend
+          </Button>
+        </CardFooter>
       </Card>
     </motion.div>
   )

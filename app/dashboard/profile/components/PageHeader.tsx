@@ -1,7 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { User } from "lucide-react"
+import { Settings, User } from "lucide-react"
 
 interface PageHeaderProps {
   title: string
@@ -11,25 +11,21 @@ interface PageHeaderProps {
 }
 
 export function PageHeader({ title, description, profileName, profileEmail }: PageHeaderProps) {
-  const fadeIn = {
-    hidden: { opacity: 0, y: -20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-  }
-
   return (
     <motion.div
-      initial="hidden"
-      animate="visible"
-      variants={fadeIn}
-      className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="mb-8"
     >
-      <div>
-        <h1 className="text-2xl md:text-3xl font-bold mb-2 text-primary">{title}</h1>
-        <p className="text-muted-foreground">{description}</p>
+      <div className="flex items-center gap-2 mb-2">
+        <Settings className="h-6 w-6 text-primary" />
+        <h1 className="text-3xl font-bold">{title}</h1>
       </div>
+      <p className="text-muted-foreground">{description}</p>
       
       <motion.div 
-        className="mt-4 md:mt-0 flex items-center gap-3 bg-muted/50 p-3 rounded-lg"
+        className="mt-4 flex items-center gap-3 bg-muted/50 p-3 rounded-lg"
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.2, duration: 0.3 }}

@@ -3,6 +3,7 @@
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { motion } from "framer-motion"
+import { User, Settings, ChevronRight } from "lucide-react"
 import DashboardHeader from "@/components/dashboard-header"
 import DashboardSidebar from "@/components/dashboard-sidebar"
 import { useAuth } from "@/lib/context/auth-context"
@@ -14,6 +15,22 @@ import { PageHeader } from "./components/PageHeader"
 import { ProfileTabs } from "./components/ProfileTabs"
 import { ProfileSidebar } from "./components/ProfileSidebar"
 import { SuccessAlert } from "./components/SuccessAlert"
+
+// Animation variants
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+}
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } },
+}
 
 export default function ProfilePage() {
   const router = useRouter()
@@ -131,14 +148,14 @@ export default function ProfilePage() {
             <motion.div 
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
               className="container mx-auto px-4 py-8"
             >
-              <PageHeader
-                title="My Profile"
-                description="Manage your account settings and preferences"
-                profileName={user?.name || "User"}
-                profileEmail={user?.email || "user@example.com"}
-              />
+              <div className="flex items-center gap-2 mb-2">
+                <User className="h-6 w-6 text-primary" />
+                <h1 className="text-3xl font-bold">My Profile</h1>
+              </div>
+              <p className="text-muted-foreground mb-6">Manage your account settings and preferences</p>
               
               <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-6 mb-6">
                 <h2 className="text-destructive text-lg font-semibold mb-2">Error loading profile</h2>
@@ -146,13 +163,13 @@ export default function ProfilePage() {
                 <div className="flex flex-wrap gap-3">
                   <button 
                     onClick={() => window.location.reload()}
-                    className="bg-destructive hover:bg-destructive/90 text-white px-4 py-2 rounded-md text-sm font-medium"
+                    className="bg-destructive hover:bg-destructive/90 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
                   >
                     Try Again
                   </button>
                   <button 
                     onClick={() => router.push("/dashboard")}
-                    className="border border-destructive/20 text-destructive hover:bg-destructive/10 px-4 py-2 rounded-md text-sm font-medium"
+                    className="border border-destructive/20 text-destructive hover:bg-destructive/10 px-4 py-2 rounded-md text-sm font-medium transition-colors"
                   >
                     Go to Dashboard
                   </button>
@@ -175,22 +192,30 @@ export default function ProfilePage() {
 
         <main className="p-6">
           <motion.div 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial="hidden"
+            animate="show"
+            variants={containerVariants}
             className="container mx-auto px-4 py-8"
           >
-            <PageHeader
-              title="My Profile"
-              description="Manage your account settings and preferences"
-              profileName={profile.name}
-              profileEmail={profile.email}
-            />
+            <motion.div variants={itemVariants} className="mb-8">
+              <div className="flex items-center gap-2 mb-2">
+                <Settings className="h-6 w-6 text-primary" />
+                <h1 className="text-3xl font-bold">My Profile</h1>
+              </div>
+              <div className="flex items-center gap-1 text-muted-foreground">
+                <span>Dashboard</span>
+                <ChevronRight className="h-4 w-4" />
+                <span className="text-foreground font-medium">My Profile</span>
+              </div>
+            </motion.div>
 
-            <SuccessAlert message={successMessage} />
+            <motion.div variants={itemVariants}>
+              <SuccessAlert message={successMessage} />
+            </motion.div>
 
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
               {/* Profile sidebar with user info and stats */}
-              <div>
+              <motion.div variants={itemVariants}>
                 <ProfileSidebar 
                   profile={{
                     name: profile.name,
@@ -201,25 +226,27 @@ export default function ProfilePage() {
                   }} 
                   statistics={statistics} 
                 />
-              </div>
+              </motion.div>
 
-              <div className="lg:col-span-3">
-                <ProfileTabs
-                  activeTab={activeTab}
-                  onTabChange={setActiveTab}
-                  profile={profile}
-                  passwordData={passwordData}
-                  settings={settings}
-                  isUpdating={isUpdating}
-                  onProfileChange={handleProfileChange}
-                  onPasswordChange={handlePasswordChange}
-                  onNotificationChange={handleNotificationChange}
-                  onPrivacyChange={handlePrivacyChange}
-                  onProfileSubmit={handleProfileSubmit}
-                  onPasswordSubmit={handlePasswordSubmit}
-                  onSettingsSubmit={handleSettingsSubmit}
-                />
-              </div>
+              <motion.div variants={itemVariants} className="lg:col-span-3">
+                <div className="bg-white border border-border rounded-lg shadow-sm overflow-hidden transition-all duration-300 hover:shadow-md">
+                  <ProfileTabs
+                    activeTab={activeTab}
+                    onTabChange={setActiveTab}
+                    profile={profile}
+                    passwordData={passwordData}
+                    settings={settings}
+                    isUpdating={isUpdating}
+                    onProfileChange={handleProfileChange}
+                    onPasswordChange={handlePasswordChange}
+                    onNotificationChange={handleNotificationChange}
+                    onPrivacyChange={handlePrivacyChange}
+                    onProfileSubmit={handleProfileSubmit}
+                    onPasswordSubmit={handlePasswordSubmit}
+                    onSettingsSubmit={handleSettingsSubmit}
+                  />
+                </div>
+              </motion.div>
             </div>
           </motion.div>
         </main>

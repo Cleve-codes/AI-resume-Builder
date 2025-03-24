@@ -40,7 +40,7 @@ const transporter = createTransport();
 // Set application info
 const APP_NAME = 'AI Resume Builder';
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-const FROM_EMAIL = process.env.EMAIL_FROM || 'noreply@example.com';
+const FROM_EMAIL = process.env.EMAIL_FROM || 'noreply@resumebuilder.com';
 
 
 /**

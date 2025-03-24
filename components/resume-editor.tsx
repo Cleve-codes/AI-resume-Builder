@@ -1,27 +1,36 @@
 "use client"
 
 import type React from "react"
-
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Plus, Trash2 } from "lucide-react"
+import { ResumeData, Experience as ResumeExperience } from "@/types/resume"
 
-export default function ResumeEditor() {
-  const [contactInfo, setContactInfo] = useState({
+// Define a local experience type that includes an id for UI operations
+interface ExperienceWithId extends ResumeExperience {
+  id: number;
+}
+
+interface ResumeEditorProps {
+  initialData?: ResumeData;
+  onFieldChange?: (section: string, index: number, field: string, value: string) => void;
+}
+
+export default function ResumeEditor({ initialData, onFieldChange }: ResumeEditorProps) {
+  // Default sample data if no initial data is provided
+  const defaultContactInfo = {
     name: "John Doe",
     email: "john.doe@example.com",
     phone: "(555) 123-4567",
     location: "San Francisco, CA",
     linkedin: "linkedin.com/in/johndoe",
-  })
+  }
 
-  const [summary, setSummary] = useState(
-    "Experienced software engineer with 5+ years of experience in full-stack development. Proficient in React, Node.js, and cloud technologies. Passionate about building scalable and user-friendly applications.",
-  )
+  const defaultSummary = "Experienced software engineer with 5+ years of experience in full-stack development. Proficient in React, Node.js, and cloud technologies. Passionate about building scalable and user-friendly applications."
 
-  const [experiences, setExperiences] = useState([
+  const defaultExperiences: ExperienceWithId[] = [
     {
       id: 1,
       title: "Senior Software Engineer",
@@ -29,6 +38,7 @@ export default function ResumeEditor() {
       location: "San Francisco, CA",
       startDate: "2021-01",
       endDate: "Present",
+      current: true,
       description:
         "Led development of a customer-facing web application using React and Node.js. Improved application performance by 40% through code optimization and implementing efficient data structures.",
     },
@@ -39,42 +49,89 @@ export default function ResumeEditor() {
       location: "San Jose, CA",
       startDate: "2018-06",
       endDate: "2020-12",
+      current: false,
       description:
         "Developed and maintained RESTful APIs using Node.js and Express. Collaborated with cross-functional teams to implement new features and resolve bugs.",
     },
-  ])
+  ]
+  
+  // Convert resume experiences to include IDs if they don't have them
+  const convertExperiencesToLocalFormat = (experiences: ResumeExperience[] | undefined): ExperienceWithId[] => {
+    if (!experiences) return defaultExperiences;
+    
+    return experiences.map((exp, index) => ({
+      ...exp,
+      id: index + 1, // Add an id for UI operations
+    }));
+  };
+  
+  // Initialize state with provided data or defaults
+  const [contactInfo, setContactInfo] = useState(initialData?.personalInfo || defaultContactInfo);
+  const [summary, setSummary] = useState(initialData?.summary || defaultSummary);
+  const [experiences, setExperiences] = useState<ExperienceWithId[]>(convertExperiencesToLocalFormat(initialData?.experience));
 
   const handleContactChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setContactInfo((prev) => ({ ...prev, [name]: value }))
+    
+    // If onFieldChange is provided, notify parent component of the change
+    if (onFieldChange) {
+      onFieldChange('personalInfo', 0, name, value);
+    }
   }
 
   const handleSummaryChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setSummary(e.target.value)
+    
+    // If onFieldChange is provided, notify parent component of the change
+    if (onFieldChange) {
+      onFieldChange('summary', 0, 'content', e.target.value);
+    }
   }
 
   const handleExperienceChange = (id: number, field: string, value: string) => {
+    // Find the index of the experience in the array
+    const index = experiences.findIndex(exp => exp.id === id)
+    
     setExperiences((prev) => prev.map((exp) => (exp.id === id ? { ...exp, [field]: value } : exp)))
+    
+    // If onFieldChange is provided, notify parent component of the change
+    if (onFieldChange && index !== -1) {
+      onFieldChange('experience', index, field, value)
+    }
   }
 
   const addExperience = () => {
     const newId = Math.max(0, ...experiences.map((exp) => exp.id)) + 1
-    setExperiences((prev) => [
-      ...prev,
-      {
-        id: newId,
-        title: "",
-        company: "",
-        location: "",
-        startDate: "",
-        endDate: "",
-        description: "",
-      },
-    ])
+    const newExperience: ExperienceWithId = {
+      id: newId,
+      title: "",
+      company: "",
+      location: "",
+      startDate: "",
+      endDate: "",
+      current: false,
+      description: "",
+    }
+    
+    setExperiences((prev) => [...prev, newExperience])
+    
+    // If onFieldChange is provided, notify parent component of the addition
+    if (onFieldChange) {
+      onFieldChange('experience', experiences.length, 'added', JSON.stringify(newExperience))
+    }
   }
 
   const removeExperience = (id: number) => {
+    // Find the index of the experience in the array before removing it
+    const index = experiences.findIndex(exp => exp.id === id)
+    
     setExperiences((prev) => prev.filter((exp) => exp.id !== id))
+    
+    // If onFieldChange is provided, notify parent component of the removal
+    if (onFieldChange && index !== -1) {
+      onFieldChange('experience', index, 'removed', id.toString())
+    }
   }
 
   return (

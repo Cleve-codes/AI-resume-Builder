@@ -16,7 +16,9 @@ import {
   Loader2,
   ArrowRight,
   AlertCircle,
+  Layout,
 } from "lucide-react"
+import Link from "next/link"
 
 // Animation variants
 const itemVariants = {
@@ -27,9 +29,10 @@ const itemVariants = {
 interface FileUploaderProps {
   onFileProcessed: (parsedData: any) => void
   onTabChange: (tab: string) => void
+  selectedTemplate?: string | null
 }
 
-export function FileUploader({ onFileProcessed, onTabChange }: FileUploaderProps) {
+export function FileUploader({ onFileProcessed, onTabChange, selectedTemplate }: FileUploaderProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [dragActive, setDragActive] = useState(false)
   const [file, setFile] = useState<File | null>(null)
@@ -192,6 +195,18 @@ export function FileUploader({ onFileProcessed, onTabChange }: FileUploaderProps
           <CardDescription>Upload your existing resume file to import your information</CardDescription>
         </CardHeader>
         <CardContent className="pt-6">
+          {selectedTemplate && (
+            <Alert className="mb-6 bg-primary/5 border-primary/20">
+              <div className="flex items-center gap-2">
+                <Layout className="h-4 w-4 text-primary" />
+                <div className="font-medium">Template Selected: {selectedTemplate}</div>
+              </div>
+              <AlertDescription className="mt-2">
+                You've selected the {selectedTemplate} template. Upload your resume or create from scratch to use this template.
+              </AlertDescription>
+            </Alert>
+          )}
+          
           {uploadStatus === "idle" || uploadStatus === "error" ? (
             <div
               className={`border-2 border-dashed rounded-lg p-8 transition-colors ${
@@ -203,73 +218,72 @@ export function FileUploader({ onFileProcessed, onTabChange }: FileUploaderProps
               onDrop={handleDrop}
             >
               <div className="flex flex-col items-center justify-center text-center">
-                <div className="mb-4 rounded-full bg-primary/10 p-4">
-                  <FileText className="h-8 w-8 text-primary" />
-                </div>
-                <h3 className="mb-2 text-lg font-semibold">Drag and drop your resume file</h3>
-                <p className="mb-4 text-sm text-muted-foreground max-w-md">
-                  Upload your resume in PDF, DOCX, or TXT format. We'll automatically parse your
-                  information.
+                <FileUp className="h-10 w-10 text-muted-foreground mb-4" />
+                <h3 className="font-semibold text-lg mb-2">Drag & drop your resume file</h3>
+                <p className="text-muted-foreground text-sm mb-4">
+                  Support for PDF, DOCX, and TXT files (max 5MB)
                 </p>
                 <input
                   ref={fileInputRef}
                   type="file"
                   className="hidden"
-                  accept=".pdf,.docx,.doc,.txt"
+                  accept=".pdf,.docx,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain"
                   onChange={handleChange}
                 />
-                <Button onClick={onButtonClick} className="gap-2">
-                  <FileUp className="h-4 w-4" /> Browse Files
+                <Button onClick={onButtonClick} className="mb-2">
+                  Select File
                 </Button>
-                <p className="mt-2 text-xs text-muted-foreground">Maximum file size: 5MB</p>
+                <Link href="/dashboard/resume/templates" >
+                <p className="text-xs text-muted-foreground">
+                  or create a <Button variant="link" className="p-0 h-auto text-xs">new resume from scratch</Button>
+                </p>
+                </Link>
               </div>
             </div>
           ) : (
-            <div className="border rounded-lg p-6">
-              <div className="flex items-center mb-4">
-                <div className="mr-4 p-2 bg-primary/10 rounded-md">
-                  <File className="h-8 w-8 text-primary" />
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="bg-muted p-2 rounded">
+                    <FileText className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-sm">{file?.name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {(file?.size && (file.size / 1024).toFixed(0)) || 0} KB
+                    </p>
+                  </div>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-medium truncate">{file?.name}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {file && (file.size / 1024 / 1024).toFixed(2)} MB
-                  </p>
-                </div>
-                {uploadStatus !== "uploading" && uploadStatus !== "processing" && (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={handleReset}
-                    className="text-muted-foreground hover:text-foreground"
-                  >
+                {uploadStatus !== "success" && (
+                  <Button variant="ghost" size="sm" onClick={handleReset}>
                     <X className="h-4 w-4" />
                   </Button>
                 )}
               </div>
 
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span>
-                    {uploadStatus === "uploading" && "Uploading..."}
-                    {uploadStatus === "processing" && "Processing..."}
-                    {uploadStatus === "success" && "Upload complete"}
-                  </span>
-                  <span>{uploadProgress}%</span>
+              {uploadStatus === "uploading" && (
+                <div className="space-y-2">
+                  <div className="flex justify-between text-xs">
+                    <span>Uploading...</span>
+                    <span>{uploadProgress}%</span>
+                  </div>
+                  <Progress value={uploadProgress} className="h-1" />
                 </div>
-                <Progress value={uploadProgress} className="h-2" />
-              </div>
+              )}
 
               {uploadStatus === "processing" && (
-                <div className="mt-4 flex justify-center">
-                  <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                <div className="bg-primary/5 p-3 rounded-md flex items-center gap-3">
+                  <Loader2 className="h-4 w-4 text-primary animate-spin" />
+                  <span className="text-sm">Processing your resume...</span>
                 </div>
               )}
 
               {uploadStatus === "success" && (
-                <div className="mt-4 flex justify-center">
-                  <Button onClick={() => onTabChange("preview")} className="gap-2">
-                    Preview Resume <ArrowRight className="h-4 w-4" />
+                <div className="bg-green-50 p-3 rounded-md flex items-center gap-3">
+                  <Badge className="bg-green-500">Success</Badge>
+                  <span className="text-sm">Resume uploaded successfully!</span>
+                  <Button variant="ghost" size="sm" className="ml-auto" onClick={() => onTabChange("preview")}>
+                    Preview <ArrowRight className="ml-1 h-3 w-3" />
                   </Button>
                 </div>
               )}
@@ -277,26 +291,11 @@ export function FileUploader({ onFileProcessed, onTabChange }: FileUploaderProps
           )}
 
           {uploadStatus === "error" && (
-            <Alert className="mt-4 bg-destructive/10 text-destructive border-destructive/20">
+            <Alert variant="destructive" className="mt-4">
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>{errorMessage}</AlertDescription>
             </Alert>
           )}
-
-          <div className="mt-6">
-            <h3 className="text-sm font-medium mb-2">Supported File Types</h3>
-            <div className="flex flex-wrap gap-2">
-              <Badge variant="outline" className="bg-blue-500/10 text-blue-500 border-blue-500/20">
-                PDF
-              </Badge>
-              <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-500/20">
-                DOCX
-              </Badge>
-              <Badge variant="outline" className="bg-amber-500/10 text-amber-500 border-amber-500/20">
-                TXT
-              </Badge>
-            </div>
-          </div>
         </CardContent>
       </Card>
     </motion.div>

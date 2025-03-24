@@ -1,12 +1,24 @@
 "use client"
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useState, useEffect } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 
 export function useResumeUpload() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [activeTab, setActiveTab] = useState("upload")
   const [parsedResume, setParsedResume] = useState<any>(null)
+  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null)
+
+  // Check for template parameter in URL on component mount
+  useEffect(() => {
+    const template = searchParams.get("template")
+    if (template) {
+      setSelectedTemplate(template)
+      // If a template is selected, we can optionally auto-navigate to the preview tab
+      // or show a notification that a template has been selected
+    }
+  }, [searchParams])
 
   // Handle file processed
   const handleFileProcessed = (parsedData: any) => {
@@ -22,6 +34,11 @@ export function useResumeUpload() {
   const handleReset = () => {
     setParsedResume(null)
     setActiveTab("upload")
+    setSelectedTemplate(null)
+    // Clear the template from URL if it exists
+    if (searchParams.has("template")) {
+      router.push("/dashboard/upload")
+    }
   }
 
   // Create resume from parsed data
@@ -33,7 +50,12 @@ export function useResumeUpload() {
 
   // Handle create from scratch
   const handleCreateFromScratch = () => {
-    router.push("/dashboard/resume/new")
+    // If a template was selected, pass it to the resume creation page
+    if (selectedTemplate) {
+      router.push(`/dashboard/resume/new?template=${encodeURIComponent(selectedTemplate)}`)
+    } else {
+      router.push("/dashboard/resume/new")
+    }
   }
 
   // Handle AI enhancement
@@ -45,6 +67,7 @@ export function useResumeUpload() {
   return {
     activeTab,
     parsedResume,
+    selectedTemplate,
     handleFileProcessed,
     handleTabChange,
     handleReset,

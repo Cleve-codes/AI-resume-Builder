@@ -26,6 +26,7 @@ export default function UploadResumePage() {
   const {
     activeTab,
     parsedResume,
+    selectedTemplate,
     handleFileProcessed,
     handleTabChange,
     handleReset,
@@ -44,6 +45,7 @@ export default function UploadResumePage() {
       <FileUploader 
         onFileProcessed={handleFileProcessed} 
         onTabChange={handleTabChange} 
+        selectedTemplate={selectedTemplate}
       />
       
       <AIFeaturesPanel 

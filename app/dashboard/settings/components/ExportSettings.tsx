@@ -19,7 +19,7 @@ interface ExportSettingsProps {
 
 export function ExportSettings({ exportSettings, onExportSettingsChange }: ExportSettingsProps) {
   return (
-    <SettingsCard title='Export Settings' icon={<Download className='h-5 w-5' />} description='Configure default export options'>
+    // <SettingsCard title='Export Settings' icon={<Download className='h-5 w-5' />} description='Configure default export options'>
       <div className='space-y-6'>
         <div className='space-y-2'>
           <Label>Default Format</Label>
@@ -88,6 +88,6 @@ export function ExportSettings({ exportSettings, onExportSettingsChange }: Expor
           />
         </div>
       </div>
-    </SettingsCard>
+    // </SettingsCard>
   )
 }

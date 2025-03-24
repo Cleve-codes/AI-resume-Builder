@@ -17,7 +17,7 @@ interface AISettingsProps {
 
 export function AISettings({ aiSettings, onAiSettingsChange }: AISettingsProps) {
   return (
-    <SettingsCard title='AI Settings' icon={<Zap className='h-5 w-5' />} description='Configure AI-powered features and preferences'>
+    // <SettingsCard title='AI Settings' icon={<Zap className='h-5 w-5' />} description='Configure AI-powered features and preferences'>
       <div className='space-y-6'>
         <div className='space-y-4'>
           <div className='flex items-center justify-between'>
@@ -82,6 +82,6 @@ export function AISettings({ aiSettings, onAiSettingsChange }: AISettingsProps) 
           />
         </div>
       </div>
-    </SettingsCard>
+    // </SettingsCard>
   )
 }

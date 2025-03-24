@@ -11,7 +11,7 @@ export function AccountSettings() {
   }
 
   return (
-    <SettingsCard title='Account Management' description='Manage your account and data'>
+    // <SettingsCard title='Account Management' description='Manage your account and data'>
       <div className='space-y-6'>
         <div className='space-y-2'>
           <h3 className='text-sm font-medium'>Account Information</h3>
@@ -80,6 +80,6 @@ export function AccountSettings() {
           </div>
         </div>
       </div>
-    </SettingsCard>
+    // </SettingsCard>
   )
 }

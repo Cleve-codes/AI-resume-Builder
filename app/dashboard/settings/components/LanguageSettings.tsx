@@ -15,7 +15,7 @@ interface LanguageSettingsProps {
 
 export function LanguageSettings({ languageSettings, onLanguageSettingsChange }: LanguageSettingsProps) {
   return (
-    <SettingsCard title='Language & Region' icon={<Globe className='h-5 w-5' />} description='Set your preferred language and regional formats'>
+    // <SettingsCard title='Language & Region' icon={<Globe className='h-5 w-5' />} description='Set your preferred language and regional formats'>
       <div className='space-y-6'>
         <div className='space-y-2'>
           <Label>Language</Label>
@@ -75,6 +75,6 @@ export function LanguageSettings({ languageSettings, onLanguageSettingsChange }:
           </div>
         </div>
       </div>
-    </SettingsCard>
+    // </SettingsCard>
   )
 }

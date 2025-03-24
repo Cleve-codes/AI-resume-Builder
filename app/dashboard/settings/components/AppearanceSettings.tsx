@@ -17,7 +17,7 @@ interface AppearanceSettingsProps {
 
 export function AppearanceSettings({ appearance, onAppearanceChange }: AppearanceSettingsProps) {
   return (
-    <SettingsCard title='Appearance Settings' icon={<Palette className='h-5 w-5' />} description='Customize how the application looks and feels'>
+    // <SettingsCard title='Appearance Settings' icon={<Palette className='h-5 w-5' />} description='Customize how the application looks and feels'>
       <div className='space-y-6'>
         <div className='space-y-3'>
           <Label className="text-sm font-medium text-gray-700">Theme</Label>
@@ -89,6 +89,6 @@ export function AppearanceSettings({ appearance, onAppearanceChange }: Appearanc
           </div>
         </div>
       </div>
-    </SettingsCard>
+    // </SettingsCard>
   )
 }

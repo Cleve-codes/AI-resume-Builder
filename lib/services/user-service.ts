@@ -9,6 +9,11 @@ export interface User {
   createdAt: Date;
   updatedAt: Date;
   
+  // Email verification
+  emailVerified: boolean;
+  verificationToken: string | null;
+  verificationTokenExpiry: Date | null;
+  
   // New profile fields from the updated schema
   profileImage: string | null;
   jobTitle: string | null;
@@ -22,6 +27,9 @@ export interface CreateUserData {
   email: string;
   password: string;
   name?: string;
+  emailVerified?: boolean;
+  verificationToken?: string;
+  verificationTokenExpiry?: Date;
 }
 
 export interface LoginUserData {
@@ -34,7 +42,14 @@ export class UserService {
    * Create a new user
    */
   async createUser(userData: CreateUserData): Promise<User> {
-    const { email, password, name } = userData;
+    const { 
+      email, 
+      password, 
+      name, 
+      emailVerified = false, 
+      verificationToken = null, 
+      verificationTokenExpiry = null 
+    } = userData;
     
     // Check if user already exists
     const existingUser = await prisma.user.findUnique({
@@ -54,6 +69,9 @@ export class UserService {
         email,
         password: hashedPassword,
         name,
+        emailVerified,
+        verificationToken,
+        verificationTokenExpiry,
       },
     });
     
@@ -75,6 +93,15 @@ export class UserService {
   async findUserById(id: string): Promise<User | null> {
     return prisma.user.findUnique({
       where: { id },
+    });
+  }
+  
+  /**
+   * Find a user by verification token
+   */
+  async findUserByVerificationToken(token: string): Promise<User | null> {
+    return prisma.user.findFirst({
+      where: { verificationToken: token },
     });
   }
   
@@ -102,11 +129,47 @@ export class UserService {
   }
   
   /**
+   * Verify a user's email
+   */
+  async verifyEmail(token: string): Promise<User> {
+    // Find user by verification token
+    const user = await this.findUserByVerificationToken(token);
+    
+    if (!user) {
+      throw new Error('Invalid verification token');
+    }
+    
+    // Check if token is expired
+    if (user.verificationTokenExpiry && user.verificationTokenExpiry < new Date()) {
+      throw new Error('Verification token has expired');
+    }
+    
+    // Update user to mark email as verified
+    return prisma.user.update({
+      where: { id: user.id },
+      data: {
+        emailVerified: true,
+        verificationToken: null,
+        verificationTokenExpiry: null,
+      },
+    });
+  }
+  
+  /**
    * Update a user's profile
    */
   async updateUserProfile(id: string, userData: Partial<User>): Promise<User> {
     // Remove sensitive fields that shouldn't be updated directly
-    const { password, id: userId, createdAt, updatedAt, ...updateData } = userData;
+    const { 
+      password, 
+      id: userId, 
+      createdAt, 
+      updatedAt, 
+      emailVerified, 
+      verificationToken, 
+      verificationTokenExpiry, 
+      ...updateData 
+    } = userData;
     
     return prisma.user.update({
       where: { id },

@@ -3,6 +3,7 @@ import { UserService } from '@/lib/services/user-service';
 import { z } from 'zod';
 import { sign } from 'jsonwebtoken';
 import { cookies } from 'next/headers';
+import { prisma } from '@/lib/prisma';
 
 // Login schema validation
 const LoginSchema = z.object({
@@ -36,6 +37,15 @@ export async function POST(request: NextRequest) {
       console.log('[API] Attempting to authenticate user:', loginData.email);
       const user = await userService.authenticateUser(loginData);
       console.log('[API] User authenticated successfully');
+      
+      // Check if email is verified
+      if (!user.emailVerified) {
+        console.log('[API] User email not verified:', loginData.email);
+        return NextResponse.json(
+          { error: 'Email not verified. Please verify your email before logging in.' },
+          { status: 403 }
+        );
+      }
       
       // Create a JWT token
       const token = sign(

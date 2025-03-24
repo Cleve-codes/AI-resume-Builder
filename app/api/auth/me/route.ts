@@ -49,6 +49,7 @@ export async function GET(request: NextRequest) {
         name: true,
         profileImage: true,
         jobTitle: true,
+        emailVerified: true,
       },
     });
     

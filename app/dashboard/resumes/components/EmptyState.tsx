@@ -68,9 +68,11 @@ export function EmptyState() {
                 <Plus className="h-4 w-4" /> Create New Resume
               </Button>
             </Link>
+            <Link href="/dashboard/upload">
             <Button variant="outline" size="lg" className="gap-2 w-full">
               <FileText className="h-4 w-4" /> Upload Existing Resume
             </Button>
+            </Link>
           </div>
         </motion.div>
       </motion.div>

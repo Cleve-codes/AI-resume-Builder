@@ -79,18 +79,35 @@ export default function LoginPage() {
       await login(formData.email, formData.password)
       // Note: The auth context will now handle redirection based on email verification status
     } catch (err) {
-      console.error('Login error:', err)
-      if (err instanceof Error && err.message.includes('not verified')) {
-        setError("Email not verified. Please check your inbox or request a new verification email.")
-        toast.error("Email not verified", {
-          description: "Please check your inbox or request a new verification email",
-          action: {
-            label: "Verify Now",
-            onClick: () => router.push(`/verify-email?email=${encodeURIComponent(formData.email)}`),
-          },
-        })
+      console.error('Login error:', err instanceof Error ? { message: err.message, stack: err.stack } : err)
+      
+      // Handle specific error cases
+      if (err instanceof Error) {
+        if (err.message.includes('not verified')) {
+          setError("Email not verified. Please check your inbox or request a new verification email.")
+          toast.error("Email not verified", {
+            description: "Please check your inbox or request a new verification email",
+            action: {
+              label: "Verify Now",
+              onClick: () => router.push(`/verify-email?email=${encodeURIComponent(formData.email)}`),
+            },
+          })
+        } else if (err.message.includes('Invalid email or password')) {
+          setError("Invalid email or password. Please try again.")
+          toast.error("Login failed", {
+            description: "Invalid email or password. Please try again."
+          })
+        } else {
+          setError(err.message || "Failed to login")
+          toast.error("Login failed", {
+            description: err.message || "An unexpected error occurred. Please try again."
+          })
+        }
       } else {
-        setError(err instanceof Error ? err.message : "Failed to login")
+        setError("Failed to login. Please try again.")
+        toast.error("Login failed", {
+          description: "An unexpected error occurred. Please try again."
+        })
       }
     }
   }
@@ -251,4 +268,3 @@ export default function LoginPage() {
     </div>
   )
 }
-

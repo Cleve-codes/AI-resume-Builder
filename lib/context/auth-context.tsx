@@ -172,7 +172,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       
       return data.user;
     } catch (err) {
-      console.error('Login error:', err);
+      console.error('Login error:', err instanceof Error ? { message: err.message, name: err.name } : err);
       setError(err instanceof Error ? err.message : 'Failed to login');
       throw err;
     } finally {
@@ -234,7 +234,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       return data;
     } catch (err) {
-      console.error('Resend verification error:', err);
+      console.error('Resend verification error:', err instanceof Error ? { message: err.message, name: err.name } : err);
       setError(err instanceof Error ? err.message : 'Failed to resend verification email');
       throw err;
     } finally {

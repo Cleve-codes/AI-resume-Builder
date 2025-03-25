@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
   
   try {
     // Get the token from the request cookies
-    const token = request.cookies.get('auth-token')?.value;
+    const token = request.cookies.get('auth_token')?.value;
     
     if (!token) {
       console.log('[API] No auth token found in cookies');

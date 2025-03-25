@@ -52,6 +52,7 @@ export async function POST(request: NextRequest) {
         {
           id: user.id,
           email: user.email,
+          name: user.name,
         },
         process.env.NEXTAUTH_SECRET || 'fallback-secret',
         { expiresIn: '7d' }
@@ -67,7 +68,7 @@ export async function POST(request: NextRequest) {
       );
       
       // Set the cookie in the response
-      response.cookies.set('auth-token', token, {
+      response.cookies.set('auth_token', token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         maxAge: 60 * 60 * 24 * 7, // 7 days

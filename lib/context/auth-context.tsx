@@ -90,7 +90,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
         console.log('Auth check response:', res.status);
         
         if (!res.ok) {
-          console.error(`Auth check failed with status ${res.status}`);
+          // For 401 errors, don't log as error on non-protected routes
+          if (res.status === 401 && !isProtectedRoute()) {
+            console.log('User not authenticated (expected for public route)');
+          } else {
+            console.error(`Auth check failed with status ${res.status}`);
+          }
           
           // Clear any invalid auth tokens
           if (res.status === 401) {

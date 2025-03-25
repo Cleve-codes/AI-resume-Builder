@@ -11,6 +11,9 @@ import { TemplateGallery } from '@/app/dashboard/resume/templates/components/tem
 import DashboardSidebar from '@/components/dashboard-sidebar';
 import DashboardHeader from '@/components/dashboard-header';
 
+// Mockup Images for the templates
+import Modern from '@/public/templates/thumbnails/modern.jpg';
+
 export const metadata: Metadata = {
   title: 'Resume Templates',
   description: 'Choose from a variety of professional resume templates to customize your resume.',
@@ -103,7 +106,7 @@ export default async function TemplatesPage() {
                        <TabsContent value="all" className="mt-6">
                          <TemplateGallery 
                            templates={templates} 
-                           isPremiumUser={isPremiumUser} 
+                           isPremiumUser={isPremiumUser}
                          />
                        </TabsContent>
                        

@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { Badge } from '@/components/ui/badge';
 import { TemplatePreview } from './template-preview';
+import Image, { StaticImageData } from 'next/image';
 
 interface TemplateGalleryProps {
   templates: ResumeTemplate[];
@@ -15,6 +16,53 @@ interface TemplateGalleryProps {
   onTemplateSelect?: (template: ResumeTemplate) => void;
   isSelectionMode?: boolean;
 }
+
+interface TemplateImageProps {
+  template: ResumeTemplate;
+}
+
+const TemplateImage = ({ template }: TemplateImageProps) => {
+  const [hasError, setHasError] = useState(false);
+  
+  // If no thumbnail or error loading, show placeholder
+  if (!template.thumbnail || hasError) {
+    return (
+      <div className="w-full h-full flex items-center justify-center bg-gray-100">
+        <div className="text-4xl font-bold text-gray-300">{template.name.charAt(0)}</div>
+      </div>
+    );
+  }
+  
+  // If the thumbnail is an HTML file, use an iframe
+  if (template.thumbnail.endsWith('.html')) {
+    return (
+      <div className="w-full h-full overflow-hidden">
+        <iframe 
+          src={template.thumbnail}
+          className="w-full h-full border-0"
+          title={`${template.name} thumbnail`}
+          loading="lazy"
+          scrolling="no"
+          style={{ overflow: 'hidden' }}
+          onError={() => setHasError(true)}
+        />
+      </div>
+    );
+  }
+
+  // For image thumbnails
+  return (
+    <Image 
+      src={template.thumbnail} 
+      alt={template.name}
+      width={320}
+      height={160}
+      className="w-full h-full object-cover"
+      loading="lazy"
+      onError={() => setHasError(true)}
+    />
+  );
+};
 
 export function TemplateGallery({
   templates,
@@ -118,11 +166,7 @@ export function TemplateGallery({
             }`}
           >
             <div className="h-40 relative bg-gray-100">
-              <img 
-                src={template.thumbnail} 
-                alt={template.name}
-                className="w-full h-full object-cover"
-              />
+              <TemplateImage template={template} />
               
               {template.isPremium && (
                 <Badge variant="secondary" className="absolute top-2 right-2 bg-yellow-500 hover:bg-yellow-600">

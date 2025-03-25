@@ -53,6 +53,7 @@ model Resume {
   isPublic          Boolean   @default(false)
   version           Int       @default(1)
   atsScore          Int?      // 0-100 score for ATS compatibility
+  status            String    @default("draft") // e.g., "draft", "in-progress", "complete", "needs review"
   
   // Relations
   userId            String

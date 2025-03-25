@@ -11,6 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { CircleIcon, ArrowLeft } from "lucide-react"
 import { toast } from "sonner"
 import { useAuth } from '@/lib/context/auth-context'
+import GoogleAuthButton from '@/components/google-auth-button'
 
 // Define a type for the validation error format returned by Zod
 type ValidationErrors = {
@@ -217,6 +218,16 @@ export default function SignupPage() {
                 >
                   {authLoading ? "Creating account..." : "Create Account"}
                 </Button>
+                
+                <div className="relative my-4 flex items-center justify-center">
+                  <div className="absolute border-t border-gray-300 w-full"></div>
+                  <div className="relative bg-white px-4 text-sm text-gray-500">or</div>
+                </div>
+                
+                <GoogleAuthButton
+                  className="py-2.5"
+                  text="Sign up with Google"
+                />
                 <div className="text-center text-sm text-gray-600 mt-4">
                   Already have an account?{" "}
                   <Link href="/login" className="text-blue-600 hover:text-blue-800 hover:underline font-medium">

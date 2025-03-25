@@ -61,7 +61,6 @@
     "next": "15.1.0",
     "next-themes": "^0.4.4",
     "nodemailer": "^6.10.0",
-    "outline": "link:@heroicons/react/outline",
     "pg": "^8.14.1",
     "react": "^19",
     "react-day-picker": "8.10.1",

@@ -23,6 +23,7 @@ interface AuthContextType {
   resendVerification: (email: string) => Promise<void>;
   verifyEmail: (token: string) => Promise<void>;
   error: string | null;
+  setUser: (user: User | null) => void; // Added for Google Auth
 }
 
 // Create the auth context
@@ -91,6 +92,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
         if (!res.ok) {
           console.error(`Auth check failed with status ${res.status}`);
           
+          // Clear any invalid auth tokens
+          if (res.status === 401) {
+            console.log('Clearing invalid auth token');
+            document.cookie = 'auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+          }
+          
           // If on a protected route and not authenticated, redirect to login
           if (isProtectedRoute()) {
             router.push('/login');
@@ -104,6 +111,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
         
         const data = await res.json();
         console.log('Auth check successful, user data received');
+        
+        // If user is authenticated but trying to access login/signup pages, redirect to home
+        if ((pathname === '/login' || pathname === '/signup') && data.user) {
+          console.log('User already authenticated, redirecting to home');
+          router.push('/');
+          setUser(data.user);
+          setIsLoading(false);
+          setInitialCheckDone(true);
+          return;
+        }
         
         // Check if email is verified for protected routes
         if (isProtectedRoute() && !data.user.emailVerified) {
@@ -120,6 +137,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
         console.error('Failed to check authentication status:', err);
         setUser(null);
         
+        // Clear any invalid auth tokens
+        document.cookie = 'auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        
         // If on a protected route, redirect to login on error
         if (isProtectedRoute()) {
           router.push('/login');
@@ -130,9 +150,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       }
     };
 
-    if (!initialCheckDone || isProtectedRoute()) {
-      checkUserLoggedIn();
-    }
+    // Always check user login status for all routes
+    checkUserLoggedIn();
+  
   }, [pathname, initialCheckDone, router]);
 
   // Login function
@@ -308,7 +328,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
       logout, 
       resendVerification,
       verifyEmail,
-      error 
+      error,
+      setUser // Expose setUser for Google Auth
     }}>
       {children}
     </AuthContext.Provider>

@@ -1,13 +1,11 @@
 "use client";
 
-import React from 'react';
-import { ResumeTemplate } from '@/types/resume';
-import ProfessionalTemplate from '@/app/components/resume-templates/ProfessionalTemplate';
-import ModernTemplate from '@/app/components/resume-templates/ModernTemplate';
+import { useState } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { ArrowDownIcon, XMarkIcon } from '@heroicons/react/24/outline';
-// import { ArrowDownIcon, XIcon } from '@heroicons/react/24/outline';
-
+import { Badge } from '@/components/ui/badge';
+import { ResumeTemplate } from '@/types/resume';
+import Image from 'next/image';
 
 // Sample data for preview
 const sampleResumeData = {
@@ -95,75 +93,102 @@ interface TemplatePreviewProps {
   isPremiumUser: boolean;
 }
 
-export function TemplatePreview({
-  template,
-  onClose,
-  onSelect,
-  isPremiumUser
-}: TemplatePreviewProps) {
-  const canUse = !template.isPremium || isPremiumUser;
+const TemplateImage = ({ template }: { template: ResumeTemplate }) => {
+  const [hasError, setHasError] = useState(false);
   
-  const renderTemplateComponent = () => {
-    // Use the layout property to determine which template to render
-    switch (template.structure.layout) {
-      case 'split':
-        return (
-          <ModernTemplate
-            data={sampleResumeData}
-            template={template}
-            scale={0.7}
-            isEditable={false}
-          />
-        );
-      case 'standard':
-      default:
-        return (
-          <ProfessionalTemplate
-            data={sampleResumeData}
-            template={template}
-            scale={0.7}
-            isEditable={false}
-          />
-        );
+  if (!template.thumbnail || hasError) {
+    return (
+      <div className="w-full h-[300px] flex items-center justify-center bg-gray-100 rounded-md">
+        <div className="text-6xl font-bold text-gray-300">{template.name.charAt(0)}</div>
+      </div>
+    );
+  }
+
+  // If the thumbnail is an HTML file, use an iframe
+  if (template.thumbnail.endsWith('.html')) {
+    return (
+      <div className="w-full h-[300px] overflow-hidden rounded-md">
+        <iframe 
+          src={template.thumbnail}
+          className="w-full h-full border-0"
+          title={`${template.name} thumbnail`}
+          loading="lazy"
+          scrolling="no"
+          style={{ overflow: 'hidden' }}
+          onError={() => setHasError(true)}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <Image 
+      src={template.thumbnail}
+      alt={template.name}
+      width={600}
+      height={300}
+      className="w-full h-[300px] object-cover rounded-md"
+      onError={() => setHasError(true)}
+    />
+  );
+};
+
+export function TemplatePreview({ template, onClose, onSelect, isPremiumUser }: TemplatePreviewProps) {
+  const handleSelectClick = () => {
+    if (template.isPremium && !isPremiumUser) {
+      return; // Don't allow selection if premium template and user is not premium
     }
+    
+    onSelect(template);
   };
   
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-auto">
-        <div className="p-4 border-b flex items-center justify-between sticky top-0 bg-white z-10">
-          <div>
-            <h2 className="text-xl font-semibold">{template.name}</h2>
-            <p className="text-sm text-gray-500">{template.description}</p>
+    <Dialog open={true} onOpenChange={() => onClose()}>
+      <DialogContent className="max-w-3xl">
+        <DialogHeader>
+          <DialogTitle className="flex items-center justify-between">
+            <span>{template.name}</span>
+            {template.isPremium && (
+              <Badge className="ml-2 bg-yellow-500">Premium</Badge>
+            )}
+          </DialogTitle>
+        </DialogHeader>
+        
+        <div className="mt-4">
+          <TemplateImage template={template} />
+          
+          <div className="mt-4">
+            <h3 className="text-sm font-medium text-gray-900">Description</h3>
+            <p className="mt-1 text-sm text-gray-500">{template.description}</p>
           </div>
           
-          <div className="flex items-center gap-4">
-            <Button
-              onClick={() => onSelect(template)}
-              disabled={!canUse}
-              variant="default"
-              className="flex items-center gap-2"
-            >
-              <ArrowDownIcon className="h-4 w-4" />
-              {canUse ? 'Use This Template' : 'Premium Template'}
-            </Button>
-            
-            <Button
-              onClick={onClose}
-              variant="ghost"
-              size="icon"
-            >
-              <XMarkIcon className="h-5 w-5" />
-            </Button>
+          <div className="mt-4">
+            <h3 className="text-sm font-medium text-gray-900">Category</h3>
+            <p className="mt-1 text-sm text-gray-500">{template.category}</p>
           </div>
+          
+          {template.isPremium && !isPremiumUser && (
+            <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-md">
+              <p className="text-sm text-amber-800">
+                This is a premium template. Upgrade your account to access this template.
+              </p>
+            </div>
+          )}
         </div>
         
-        <div className="p-6 flex items-center justify-center overflow-auto">
-          <div className="transform origin-top-left">
-            {renderTemplateComponent()}
-          </div>
-        </div>
-      </div>
-    </div>
+        <DialogFooter className="flex justify-between">
+          <Button variant="outline" onClick={onClose}>
+            Cancel
+          </Button>
+          
+          <Button 
+            onClick={handleSelectClick}
+            disabled={template.isPremium && !isPremiumUser}
+          >
+            {template.isPremium && !isPremiumUser ? 'Premium Template' : 'Use This Template'}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 } 

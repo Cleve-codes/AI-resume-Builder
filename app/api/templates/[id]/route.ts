@@ -10,44 +10,54 @@ interface RouteParams {
 
 // GET /api/templates/[id]
 // Fetch a specific template by ID
-export async function GET(req: NextRequest, { params }: RouteParams) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
     const { id } = params;
     
-    // Validate ID
     if (!id) {
       return NextResponse.json(
         { error: 'Template ID is required' },
         { status: 400 }
       );
     }
-    
-    // Fetch template
+
+    // Get the current user (optional)
+    const user = await getCurrentUserFromRequest(request);
+    const userIsPremium = user?.isPremium || false;
+
+    // Fetch the template
     const template = await prisma.template.findUnique({
-      where: { id }
+      where: {
+        id: id,
+      },
     });
-    
-    // Check if template exists
+
+    // If template doesn't exist, return 404
     if (!template) {
       return NextResponse.json(
         { error: 'Template not found' },
         { status: 404 }
       );
     }
-    
-    // Get current user's premium status to determine if template is locked
-    const user = getCurrentUserFromRequest(req);
-    const userIsPremium = user?.isPremium || false;
-    
-    // If user is not premium and template is premium, mark as locked
-    const processedTemplate = {
-      ...template,
-      isLocked: template.isPremium && !userIsPremium
-    };
-    
-    return NextResponse.json(processedTemplate);
+
+    // If template is premium and user is not premium, mark it as locked
+    if (template.isPremium && !userIsPremium) {
+      return NextResponse.json(
+        {
+          ...template,
+          isLocked: true,
+        },
+        { status: 200 }
+      );
+    }
+
+    // Return the template
+    return NextResponse.json(template, { status: 200 });
   } catch (error) {
-    console.error(`Error fetching template with ID ${params.id}:`, error);
+    console.error('Error fetching template:', error);
     return NextResponse.json(
       { error: 'Failed to fetch template' },
       { status: 500 }

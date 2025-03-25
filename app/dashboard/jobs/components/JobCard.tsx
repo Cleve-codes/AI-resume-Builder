@@ -18,12 +18,13 @@ import { Job } from "../types"
 
 interface JobCardProps {
   job: Job
+  isSelected?: boolean
   onSelect: () => void
   onSave: () => void
   onApply: () => void
 }
 
-export function JobCard({ job, onSelect, onSave, onApply }: JobCardProps) {
+export function JobCard({ job, isSelected = false, onSelect, onSave, onApply }: JobCardProps) {
   const getMatchScoreColor = (score: number) => {
     if (score >= 80) return "text-green-500"
     if (score >= 60) return "text-amber-500"
@@ -38,7 +39,7 @@ export function JobCard({ job, onSelect, onSave, onApply }: JobCardProps) {
 
   return (
     <Card
-      className="overflow-hidden transition-all duration-300 hover:shadow-md cursor-pointer hover:border-primary/50"
+      className={`overflow-hidden transition-all duration-300 hover:shadow-md cursor-pointer ${isSelected ? 'border-primary shadow-md' : 'hover:border-primary/50'}`}
       onClick={onSelect}
     >
       <CardContent className="p-0">

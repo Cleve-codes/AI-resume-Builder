@@ -16,6 +16,50 @@ async function main() {
   // Create resumes for the first user
   await createResumeExamples(users[0].id, templates[0].id);
   
+  // Update template thumbnails to use placeholder images
+  await prisma.template.updateMany({
+    where: {
+      thumbnail: {
+        contains: 'example.com'
+      }
+    },
+    data: {
+      thumbnail: 'https://via.placeholder.com/320x160/0078d4/FFFFFF?text=Template'
+    }
+  });
+
+  // Update specific templates with better placeholders
+  const updatedTemplates = await prisma.template.findMany();
+  
+  for (const template of updatedTemplates) {
+    let placeholderUrl = '';
+    
+    switch (template.category.toLowerCase()) {
+      case 'creative':
+        placeholderUrl = 'https://via.placeholder.com/320x160/ff4081/FFFFFF?text=Creative';
+        break;
+      case 'professional':
+        placeholderUrl = 'https://via.placeholder.com/320x160/2c3e50/FFFFFF?text=Professional';
+        break;
+      case 'modern':
+        placeholderUrl = 'https://via.placeholder.com/320x160/0078d4/FFFFFF?text=Modern';
+        break;
+      default:
+        placeholderUrl = 'https://via.placeholder.com/320x160/333333/FFFFFF?text=Template';
+    }
+    
+    await prisma.template.update({
+      where: { id: template.id },
+      data: { 
+        thumbnail: placeholderUrl
+      }
+    });
+    
+    console.log(`Updated template ${template.name} with placeholder thumbnail`);
+  }
+  
+  console.log('Template thumbnails updated successfully');
+
   console.log('Seed completed successfully!');
 }
 
@@ -44,6 +88,25 @@ async function createTemplates() {
           sections: ['contactInfo', 'summary', 'experience', 'education', 'skills', 'projects', 'certifications', 'languages'],
           layout: 'standard',
         },
+        structure: {
+          header: {
+            type: 'header',
+            elements: ['name', 'title', 'contact']
+          },
+          body: {
+            type: 'columns',
+            columns: [
+              {
+                width: 0.7,
+                sections: ['summary', 'experience', 'education', 'projects']
+              },
+              {
+                width: 0.3,
+                sections: ['skills', 'certifications', 'languages']
+              }
+            ]
+          }
+        }
       },
     }),
     prisma.template.create({
@@ -63,6 +126,18 @@ async function createTemplates() {
           sections: ['contactInfo', 'summary', 'projects', 'experience', 'skills', 'education', 'languages'],
           layout: 'creative',
         },
+        structure: {
+          header: {
+            type: 'sidebar',
+            width: 0.3,
+            elements: ['name', 'photo', 'contact', 'skills']
+          },
+          body: {
+            type: 'main',
+            width: 0.7,
+            sections: ['summary', 'experience', 'education', 'projects', 'languages']
+          }
+        }
       },
     }),
     prisma.template.create({
@@ -82,6 +157,16 @@ async function createTemplates() {
           sections: ['contactInfo', 'summary', 'experience', 'education', 'skills', 'certifications', 'languages'],
           layout: 'classic',
         },
+        structure: {
+          header: {
+            type: 'header',
+            elements: ['name', 'title', 'contact']
+          },
+          body: {
+            type: 'sections',
+            sections: ['summary', 'experience', 'education', 'skills', 'certifications', 'languages']
+          }
+        }
       },
     }),
   ]);

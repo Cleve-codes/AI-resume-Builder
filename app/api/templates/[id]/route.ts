@@ -15,7 +15,8 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = params;
+    // Access id directly from params to avoid destructuring warning
+    const id = params.id;
     
     if (!id) {
       return NextResponse.json(
@@ -69,7 +70,8 @@ export async function GET(
 // Update a specific template (admin only)
 export async function PATCH(req: NextRequest, { params }: RouteParams) {
   try {
-    const { id } = params;
+    // Access id directly from params to avoid destructuring warning
+    const id = params.id;
     
     // Validate ID
     if (!id) {
@@ -141,7 +143,8 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
 // Delete a specific template (admin only)
 export async function DELETE(req: NextRequest, { params }: RouteParams) {
   try {
-    const { id } = params;
+    // Access id directly from params to avoid destructuring warning
+    const id = params.id;
     
     // Validate ID
     if (!id) {

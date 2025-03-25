@@ -6,8 +6,8 @@ import { getServerSideUser, requireAuth } from '@/lib/auth';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ResumeTemplate } from '@/types/resume';
 
-// Retrieve Templates component will be created in the next step
-import { TemplateGallery } from '@/app/dashboard/resume/templates/components/template-gallery';
+// Import the shared TemplateGallery component
+import { TemplateGallery } from '@/components/template-gallery';
 import DashboardSidebar from '@/components/dashboard-sidebar';
 import DashboardHeader from '@/components/dashboard-header';
 

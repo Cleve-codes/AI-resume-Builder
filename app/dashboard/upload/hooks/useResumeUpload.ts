@@ -1,24 +1,29 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useState, useEffect, useCallback } from "react"
+import { useRouter } from "next/navigation"
 
-export function useResumeUpload() {
+// This is a wrapper hook that doesn't directly use useSearchParams
+// The actual URL parameter handling will be done in the component using this hook
+export function useResumeUpload(initialTemplate: string | null = null) {
   const router = useRouter()
-  const searchParams = useSearchParams()
   const [activeTab, setActiveTab] = useState("upload")
   const [parsedResume, setParsedResume] = useState<any>(null)
-  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null)
+  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(initialTemplate)
 
-  // Check for template parameter in URL on component mount
+  // Update template when passed from parent
   useEffect(() => {
-    const template = searchParams.get("template")
+    if (initialTemplate) {
+      setSelectedTemplate(initialTemplate)
+    }
+  }, [initialTemplate])
+  
+  // Handler for template changes from URL
+  const handleTemplateFromUrl = useCallback((template: string | null) => {
     if (template) {
       setSelectedTemplate(template)
-      // If a template is selected, we can optionally auto-navigate to the preview tab
-      // or show a notification that a template has been selected
     }
-  }, [searchParams])
+  }, [])
 
   // Handle file processed
   const handleFileProcessed = (parsedData: any) => {
@@ -35,10 +40,8 @@ export function useResumeUpload() {
     setParsedResume(null)
     setActiveTab("upload")
     setSelectedTemplate(null)
-    // Clear the template from URL if it exists
-    if (searchParams.has("template")) {
-      router.push("/dashboard/upload")
-    }
+    // Navigate to the base URL without parameters
+    router.push("/dashboard/upload")
   }
 
   // Create resume from parsed data

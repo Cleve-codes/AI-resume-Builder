@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { Loader2, FileText, User, Mail, Phone, MapPin } from "lucide-react";
@@ -25,9 +25,20 @@ interface TemplateDetails {
   isLocked?: boolean;
 }
 
-export default function CreateResumePage() {
-  const router = useRouter();
+// Component to handle URL parameters
+function TemplateParamsHandler({ onTemplateId }: { onTemplateId: (id: string | null) => void }) {
   const searchParams = useSearchParams();
+  
+  useEffect(() => {
+    const templateId = searchParams.get("templateId");
+    onTemplateId(templateId);
+  }, [searchParams, onTemplateId]);
+  
+  return null;
+}
+
+function CreateResumeContent() {
+  const router = useRouter();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(true);
   const [template, setTemplate] = useState<TemplateDetails | null>(null);
@@ -39,9 +50,14 @@ export default function CreateResumePage() {
   const [phone, setPhone] = useState<string>("");
   const [location, setLocation] = useState<string>("");
   
-  // Get template parameter from URL
-  const templateId = searchParams.get("templateId");
+  // State to store template ID from URL
+  const [templateId, setTemplateId] = useState<string | null>(null);
   
+  // Handler for template ID from URL
+  const handleTemplateId = (id: string | null) => {
+    setTemplateId(id);
+  };
+
   useEffect(() => {
     // Fetch template details if we have an ID
     const fetchTemplateDetails = async () => {
@@ -444,5 +460,20 @@ export default function CreateResumePage() {
         </main>
       </div>
     </div>
+  );
+}
+
+export default function CreateResumePage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>}>
+      <>
+        <CreateResumeContent />
+        <Suspense fallback={null}>
+          <TemplateParamsHandler 
+            onTemplateId={(id) => {}} 
+          />
+        </Suspense>
+      </>
+    </Suspense>
   );
 }

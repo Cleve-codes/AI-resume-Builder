@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,9 +11,25 @@ import { CircleCheckIcon, AlertCircleIcon, MailIcon, ArrowRightIcon, CheckCircle
 import Link from "next/link";
 import { useAuth } from "@/lib/context/auth-context";
 
-export default function VerifyEmailPage() {
-  const router = useRouter();
+// Separate component to handle URL parameters
+function UrlParamsHandler({ 
+  onParamsReady, 
+}: { 
+  onParamsReady: (token: string | null, email: string | null) => void 
+}) {
   const searchParams = useSearchParams();
+  
+  useEffect(() => {
+    const tokenFromUrl = searchParams.get("token");
+    const emailFromUrl = searchParams.get("email");
+    onParamsReady(tokenFromUrl, emailFromUrl);
+  }, [searchParams, onParamsReady]);
+  
+  return null;
+}
+
+function VerifyEmailContent() {
+  const router = useRouter();
   const { verifyEmail, resendVerification, isLoading, user } = useAuth();
   
   const [email, setEmail] = useState<string>("");
@@ -22,11 +38,8 @@ export default function VerifyEmailPage() {
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [isResending, setIsResending] = useState<boolean>(false);
   
-  // Get the token and email from URL if present
-  useEffect(() => {
-    const tokenFromUrl = searchParams.get("token");
-    const emailFromUrl = searchParams.get("email");
-    
+  // Handle URL parameters
+  const handleUrlParams = (tokenFromUrl: string | null, emailFromUrl: string | null) => {
     if (tokenFromUrl) {
       setToken(tokenFromUrl);
       // Auto-submit the token for verification
@@ -38,7 +51,14 @@ export default function VerifyEmailPage() {
     } else if (user?.email) {
       setEmail(user.email);
     }
-  }, [searchParams, user]);
+  };
+  
+  // Update email from user context when available
+  useEffect(() => {
+    if (user?.email && !email) {
+      setEmail(user.email);
+    }
+  }, [user, email]);
   
   // Handle token verification
   const handleVerifyToken = async (tokenToVerify: string) => {
@@ -191,5 +211,23 @@ export default function VerifyEmailPage() {
         </CardFooter>
       </Card>
     </div>
+  );
+}
+
+export default function VerifyEmailPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+      <>
+        <VerifyEmailContent />
+        <Suspense fallback={null}>
+          <UrlParamsHandler 
+            onParamsReady={(token, email) => {
+              // This will be handled by the VerifyEmailContent component
+              // through its internal state management
+            }} 
+          />
+        </Suspense>
+      </>
+    </Suspense>
   );
 }

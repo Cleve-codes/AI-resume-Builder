@@ -12,9 +12,22 @@ import { CircleIcon, ArrowLeft, CheckCircle2Icon } from "lucide-react"
 import { toast } from "sonner"
 import { useAuth } from '@/lib/context/auth-context';
 
+// Separate component for handling search params
+function SearchParamsHandler({ onRegistered }: { onRegistered: () => void }) {
+  const searchParams = useSearchParams()
+  
+  useEffect(() => {
+    const registered = searchParams.get('registered')
+    if (registered === 'true') {
+      onRegistered()
+    }
+  }, [searchParams, onRegistered])
+  
+  return null
+}
+
 function LoginContent() {
   const router = useRouter()
-  const searchParams = useSearchParams()
   const { login, error: authError, isLoading: authLoading, user } = useAuth()
   const [formData, setFormData] = useState({
     email: "",
@@ -32,17 +45,14 @@ function LoginContent() {
     return () => clearTimeout(timer)
   }, [])
   
-  // Check if redirected from registration or if there's a callback URL
-  useEffect(() => {
-    const registered = searchParams.get('registered')
-    if (registered === 'true') {
-      toast.success("Registration successful!", {
-        description: "Please log in with your new account",
-        icon: <CheckCircle2Icon className="h-5 w-5 text-green-500" />,
-        duration: 5000,
-      })
-    }
-  }, [searchParams])
+  // Handle registration success notification
+  const handleRegistrationSuccess = () => {
+    toast.success("Registration successful!", {
+      description: "Please log in with your new account",
+      icon: <CheckCircle2Icon className="h-5 w-5 text-green-500" />,
+      duration: 5000,
+    })
+  }
   
   // Handle direct navigation to dashboard if already logged in
   useEffect(() => {
@@ -272,7 +282,18 @@ function LoginContent() {
 export default function LoginPage() {
   return (
     <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
-      <LoginContent />
+      <>
+        <LoginContent />
+        <Suspense fallback={null}>
+          <SearchParamsHandler onRegistered={() => {
+            toast.success("Registration successful!", {
+              description: "Please log in with your new account",
+              icon: <CheckCircle2Icon className="h-5 w-5 text-green-500" />,
+              duration: 5000,
+            })
+          }} />
+        </Suspense>
+      </>
     </Suspense>
   )
 }

@@ -22,13 +22,21 @@ export function getCurrentUserFromRequest(req: NextRequest): JwtPayload | null {
     const token = req.cookies.get('auth-token')?.value;
     
     if (!token) {
+      console.log('No auth-token cookie found in request');
       return null;
     }
+    
+    // Log token for debugging (first few characters only)
+    console.log(`Found auth token: ${token.substring(0, 10)}...`);
     
     const decoded = verify(token, process.env.NEXTAUTH_SECRET || 'fallback-secret');
     return decoded as JwtPayload;
   } catch (error) {
     console.error('Token verification failed:', error);
+    // Log more details about the error
+    if (error instanceof Error) {
+      console.error(`Error name: ${error.name}, message: ${error.message}`);
+    }
     return null;
   }
 }

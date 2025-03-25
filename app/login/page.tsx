@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, Suspense } from "react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -12,7 +12,7 @@ import { CircleIcon, ArrowLeft, CheckCircle2Icon } from "lucide-react"
 import { toast } from "sonner"
 import { useAuth } from '@/lib/context/auth-context';
 
-export default function LoginPage() {
+function LoginContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { login, error: authError, isLoading: authLoading, user } = useAuth()
@@ -266,5 +266,13 @@ export default function LoginPage() {
         &copy; {new Date().getFullYear()} Resume Builder. All rights reserved.
       </footer>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+      <LoginContent />
+    </Suspense>
   )
 }

@@ -75,8 +75,9 @@ export async function POST(request: NextRequest) {
     const user = await getCurrentUserFromRequest(request);
     
     if (!user?.id) {
+      console.log('Authentication required for resume creation, but no user found in request');
       return NextResponse.json(
-        { error: "Unauthorized" },
+        { error: "Authentication required. Please log in to create a resume." },
         { status: 401 }
       );
     }

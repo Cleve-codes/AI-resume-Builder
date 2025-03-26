@@ -28,28 +28,80 @@ function UrlParamsHandler({
   return null;
 }
 
-function VerifyEmailContent() {
+interface VerifyEmailContentProps {
+  initialToken?: string | null;
+  initialEmail?: string | null;
+}
+
+function VerifyEmailContent({ initialToken, initialEmail }: VerifyEmailContentProps) {
   const router = useRouter();
-  const { verifyEmail, resendVerification, isLoading, user } = useAuth();
+  const { verifyEmail, resendVerification, isLoading, user, setUser } = useAuth();
   
-  const [email, setEmail] = useState<string>("");
-  const [token, setToken] = useState<string>("");
-  const [verificationStatus, setVerificationStatus] = useState<"pending" | "success" | "error">("pending");
+  const [email, setEmail] = useState<string>(initialEmail || "");
+  const [token, setToken] = useState<string>(initialToken || "");
+  const [verificationStatus, setVerificationStatus] = useState<"pending" | "success" | "error">(initialToken ? "pending" : "pending");
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [isResending, setIsResending] = useState<boolean>(false);
+  const [autoVerificationAttempted, setAutoVerificationAttempted] = useState<boolean>(false);
   
-  // Handle URL parameters
+  // Handle initial token verification
+  useEffect(() => {
+    const verifyInitialToken = async () => {
+      if (initialToken && !autoVerificationAttempted) {
+        // Auto-submit the token for verification
+        try {
+          setVerificationStatus("pending");
+          await verifyEmail(initialToken);
+          setVerificationStatus("success");
+          toast.success("Email verified successfully!");
+          
+          // Force a refresh of the user data after verification
+          try {
+            const res = await fetch('/api/auth/me');
+            if (res.ok) {
+              const data = await res.json();
+              // Update the user in the auth context
+              if (data.user) {
+                setUser(data.user);
+              }
+            }
+          } catch (refreshError) {
+            console.error("Error refreshing user data:", refreshError);
+          }
+          
+          // Redirect to dashboard after a short delay
+          setTimeout(() => {
+            // Use window.location for a full page refresh to ensure state is updated
+            window.location.href = "/dashboard";
+          }, 2000);
+        } catch (error) {
+          console.error("Verification error:", error);
+          setVerificationStatus("error");
+          setErrorMessage(error instanceof Error ? error.message : "Failed to verify email");
+          toast.error("Email verification failed", {
+            description: error instanceof Error ? error.message : "Please try again or request a new verification link",
+          });
+        }
+        setAutoVerificationAttempted(true);
+      }
+    };
+    
+    verifyInitialToken();
+  }, [initialToken, verifyEmail, setUser]);
+  
+  // Handle URL parameters - this is kept for backward compatibility
   const handleUrlParams = (tokenFromUrl: string | null, emailFromUrl: string | null) => {
-    if (tokenFromUrl) {
+    if (tokenFromUrl && !token) {
       setToken(tokenFromUrl);
-      // Auto-submit the token for verification
-      handleVerifyToken(tokenFromUrl);
+      // Auto-submit the token for verification if not already attempted
+      if (!autoVerificationAttempted) {
+        handleVerifyToken(tokenFromUrl);
+        setAutoVerificationAttempted(true);
+      }
     }
     
-    if (emailFromUrl) {
+    if (emailFromUrl && !email) {
       setEmail(emailFromUrl);
-    } else if (user?.email) {
-      setEmail(user.email);
     }
   };
   
@@ -68,10 +120,25 @@ function VerifyEmailContent() {
       setVerificationStatus("success");
       toast.success("Email verified successfully!");
       
+      // Force a refresh of the user data after verification
+      try {
+        const res = await fetch('/api/auth/me');
+        if (res.ok) {
+          const data = await res.json();
+          // Update the user in the auth context
+          if (data.user) {
+            setUser(data.user);
+          }
+        }
+      } catch (refreshError) {
+        console.error("Error refreshing user data:", refreshError);
+      }
+      
       // Redirect to dashboard after a short delay
       setTimeout(() => {
-        router.push("/dashboard");
-      }, 3000);
+        // Use window.location for a full page refresh to ensure state is updated
+        window.location.href = "/dashboard";
+      }, 2000);
     } catch (error) {
       console.error("Verification error:", error);
       setVerificationStatus("error");
@@ -214,20 +281,25 @@ function VerifyEmailContent() {
   );
 }
 
+function VerifyEmailWithParams() {
+  const [params, setParams] = useState<{token: string | null, email: string | null}>({token: null, email: null});
+  
+  return (
+    <>
+      <UrlParamsHandler 
+        onParamsReady={(token, email) => {
+          setParams({token, email});
+        }} 
+      />
+      <VerifyEmailContent key={params.token || 'no-token'} initialToken={params.token} initialEmail={params.email} />
+    </>
+  );
+}
+
 export default function VerifyEmailPage() {
   return (
     <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
-      <>
-        <VerifyEmailContent />
-        <Suspense fallback={null}>
-          <UrlParamsHandler 
-            onParamsReady={(token, email) => {
-              // This will be handled by the VerifyEmailContent component
-              // through its internal state management
-            }} 
-          />
-        </Suspense>
-      </>
+      <VerifyEmailWithParams />
     </Suspense>
   );
 }

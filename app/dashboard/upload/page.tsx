@@ -1,6 +1,8 @@
 "use client"
 
 import { motion } from "framer-motion"
+import { useEffect } from "react"
+import { toast } from "sonner"
 import DashboardHeader from "@/components/dashboard-header"
 import DashboardSidebar from "@/components/dashboard-sidebar"
 import { FileUploader } from "./components/FileUploader"
@@ -33,6 +35,14 @@ export default function UploadResumePage() {
     handleCreateFromScratch,
     handleEnhanceWithAI,
   } = useResumeUpload()
+  
+  useEffect(() => {
+    // Show toast notification on initial render
+    toast("In development", {
+      description: "This feature is currently under development",
+      duration: 3000, // Will disappear after 3 seconds
+    })
+  }, [])
 
   // Prepare upload content
   const uploadContent = (

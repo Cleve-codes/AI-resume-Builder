@@ -19,10 +19,10 @@ export interface JwtPayload {
  */
 export function getCurrentUserFromRequest(req: NextRequest): JwtPayload | null {
   try {
-    const token = req.cookies.get('auth-token')?.value;
+    const token = req.cookies.get('auth_token')?.value;
     
     if (!token) {
-      console.log('No auth-token cookie found in request');
+      console.log('No auth_token cookie found in request');
       return null;
     }
     
@@ -52,7 +52,7 @@ export async function getServerSideUser(): Promise<JwtPayload | null> {
     const cookieHeader = headersList.get('cookie') || '';
     const cookies = parseCookies(cookieHeader);
     
-    const token = cookies['auth-token'];
+    const token = cookies['auth_token'];
     if (!token) {
       return null;
     }

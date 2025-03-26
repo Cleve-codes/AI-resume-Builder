@@ -20,7 +20,7 @@ const authPaths = [
 
 export function middleware(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
-  const token = request.cookies.get('auth-token')?.value;
+  const token = request.cookies.get('auth_token')?.value;
   
   console.log(`[Middleware] Processing: ${pathname}, Token exists: ${!!token}`);
   

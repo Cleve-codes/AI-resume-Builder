@@ -8,6 +8,7 @@ import HowItWorksSection from "@/components/landing/HowItWorksSection";
 import TestimonialsSection from "@/components/landing/TestimonialsSection";
 import CTASection from "@/components/landing/CTASection";
 import Footer from "@/components/landing/Footer";
+import { Toaster } from "@/components/ui/toaster";
 
 export default function HomePage() {
   return (
@@ -22,6 +23,7 @@ export default function HomePage() {
           <CTASection />
         </main>
         <Footer />
+        <Toaster />
       </div>
     </AnimationProvider>
   );

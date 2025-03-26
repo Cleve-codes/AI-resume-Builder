@@ -92,3 +92,18 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* Custom Toast Positioning */
+.top-toast {
+  position: fixed !important;
+  top: 20px !important;
+  left: 20px !important;
+  margin: 0 !important;
+}
+
+.bottom-toast {
+  position: fixed !important;
+  bottom: 20px !important;
+  left: 20px !important;
+  margin: 0 !important;
+}

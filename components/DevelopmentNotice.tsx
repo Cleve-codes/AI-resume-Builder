@@ -28,7 +28,7 @@ export default function DevelopmentNotice({ forceShow = false }: DevelopmentNoti
         toast({
           title: "🛠️ Development Preview",
           description: (
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2 max-w-xs">
               <p>
                 This application is still under active development. Some features may not be fully functional or might change over time.
               </p>
@@ -50,7 +50,7 @@ export default function DevelopmentNotice({ forceShow = false }: DevelopmentNoti
             </div>
           ),
           duration: 15000, // 15 seconds for the user to read the message
-          className: `border-l-4 border-blue-500 ${isHomePage ? "top-toast" : "bottom-toast"}`,
+          className: `border-l-4 border-blue-500 ${isHomePage ? "bottom-toast" : "bottom-toast"} max-w-sm w-auto`,
           variant: "default",
         });
       }, 1500); // Delay by 1.5 seconds to allow page to fully load first

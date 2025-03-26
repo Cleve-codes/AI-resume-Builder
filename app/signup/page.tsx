@@ -65,6 +65,13 @@ export default function SignupPage() {
     }
 
     try {
+      // Log the attempt with a timestamp for debugging
+      console.log('Registration attempt:', {
+        email: formData.email,
+        name: formData.name,
+        timestamp: new Date().toISOString()
+      });
+      
       await register(formData.name, formData.email, formData.password)
       
       // Show success toast - may not be visible due to redirect
@@ -76,6 +83,18 @@ export default function SignupPage() {
       // It will redirect to /login?registered=true
     } catch (err) {
       console.error('Registration error:', err)
+      
+      // Enhanced error logging
+      if (err instanceof Error) {
+        // Log detailed error information
+        console.error('Error details:', {
+          message: err.message,
+          name: err.name,
+          stack: err.stack,
+          timestamp: new Date().toISOString()
+        });
+      }
+      
       setError(err instanceof Error ? err.message : 'An error occurred during registration')
       toast.error("Registration failed", {
         description: err instanceof Error ? err.message : 'Please check your information and try again',

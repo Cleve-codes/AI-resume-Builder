@@ -211,6 +211,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setError(null);
 
     try {
+      console.log('Sending registration request to API...');
+      
       const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: {
@@ -222,14 +224,37 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error || 'Registration failed');
+        console.error('Registration API error:', {
+          status: res.status,
+          statusText: res.statusText,
+          data
+        });
+        
+        throw new Error(data.error || data.details || 'Registration failed');
       }
 
+      console.log('Registration successful, redirecting to verification page');
+      
       // Redirect to verify email page instead of login
       router.push('/verify-email?email=' + encodeURIComponent(email));
       return data.user;
     } catch (err) {
       console.error('Registration error:', err);
+      
+      // Enhanced error details
+      if (err instanceof Error) {
+        console.error('Error details:', {
+          message: err.message,
+          name: err.name,
+          stack: err.stack
+        });
+      } else if (err instanceof Response) {
+        console.error('Response error:', {
+          status: err.status,
+          statusText: err.statusText
+        });
+      }
+      
       setError(err instanceof Error ? err.message : 'Failed to register');
       throw err;
     } finally {

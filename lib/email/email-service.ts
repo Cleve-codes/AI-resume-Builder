@@ -39,7 +39,16 @@ const transporter = createTransport();
 
 // Set application info
 const APP_NAME = 'AI Resume Builder';
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+
+// Use port 3001 for development environment
+const getAppUrl = () => {
+  if (isDevelopment) {
+    return process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3001';
+  }
+  return process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+};
+
+const APP_URL = getAppUrl();
 const FROM_EMAIL = process.env.EMAIL_FROM || 'noreply@resumebuilder.com';
 
 

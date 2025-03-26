@@ -7,7 +7,7 @@ import { getCurrentUserFromRequest } from "@/lib/auth";
 
 // Middleware to get the current user from the token
 async function getCurrentUser(req: NextRequest) {
-  const token = req.cookies.get('auth-token')?.value;
+  const token = req.cookies.get('auth_token')?.value;
   
   if (!token) {
     return null;

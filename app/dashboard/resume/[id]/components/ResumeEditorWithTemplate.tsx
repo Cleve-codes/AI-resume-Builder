@@ -7,12 +7,12 @@ import { Button } from '@/components/ui/button';
 import { Loader2, User, FileText, Briefcase, GraduationCap, Award, Code, Languages, Plus } from 'lucide-react';
 
 // Import these if available, otherwise use placeholders
-let ResumeEditor: any;
+let ResumeEditor;
 try {
   ResumeEditor = require('@/components/resume-editor').default;
 } catch (error) {
   console.warn("ResumeEditor component not found, using placeholder");
-  ResumeEditor = ({ initialData, onFieldChange }: { initialData: any, onFieldChange: any }) => (
+  ResumeEditor = ({ initialData, onFieldChange }) => (
     <div className="p-4 bg-gray-50 rounded-md">
       <h3 className="text-lg font-medium mb-2">Resume Editor Placeholder</h3>
       <p>The actual Resume Editor component is missing.</p>
@@ -24,8 +24,8 @@ try {
 }
 
 // Import template components if available
-let ProfessionalTemplate: any;
-let ModernTemplate: any;
+let ProfessionalTemplate;
+let ModernTemplate;
 try {
   ProfessionalTemplate = require('@/app/components/resume-templates/ProfessionalTemplate').default;
   ModernTemplate = require('@/app/components/resume-templates/ModernTemplate').default;

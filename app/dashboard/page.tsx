@@ -7,9 +7,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FileText, Briefcase, Award, Zap } from "lucide-react";
-import DashboardHeader from "@/components/dashboard-header";
-import DashboardSidebar from "@/components/dashboard-sidebar";
-import { useAuth } from "@/lib/context/auth-context";
+import { useUser } from "@clerk/nextjs";
 
 // Import our modular components
 import { StatsCard } from "./components/StatsCard";
@@ -60,7 +58,7 @@ interface Stats {
 }
 
 export default function DashboardPage() {
-  const { user, isLoading: authLoading } = useAuth();
+  const { user, isLoaded: isUserLoaded } = useUser();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [resumes, setResumes] = useState<Resume[]>([]);
@@ -80,10 +78,10 @@ export default function DashboardPage() {
 
   // Auth check
   useEffect(() => {
-    if (!authLoading && !user) {
-      router.push('/login');
+    if (isUserLoaded && !user) {
+      router.push('/sign-in');
     }
-  }, [user, authLoading, router]);
+  }, [user, isUserLoaded, router]);
 
   // Simulate loading data from API
   useEffect(() => {
@@ -122,7 +120,7 @@ export default function DashboardPage() {
   }
 
   // Show loading state while checking auth
-  if (authLoading || !user) {
+  if (!isUserLoaded || !user) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-muted/30">
         <div className="text-center">
@@ -140,11 +138,7 @@ export default function DashboardPage() {
 
   return (
     <div className="flex min-h-screen bg-muted/30">
-      <DashboardSidebar />
-
       <div className="flex-1">
-        <DashboardHeader />
-
         <main className="p-6">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -153,7 +147,7 @@ export default function DashboardPage() {
             className="mb-8"
           >
             <h1 className="text-3xl font-bold mb-2">Dashboard</h1>
-            <p className="text-muted-foreground">Welcome back, {user?.name || 'User'}! Here's an overview of your resume progress</p>
+            <p className="text-muted-foreground">Welcome back, {user?.fullName || 'User'}! Here's an overview of your resume progress</p>
           </motion.div>
 
           {isLoading ? (
@@ -168,32 +162,32 @@ export default function DashboardPage() {
                 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
               >
                 <motion.div variants={itemVariants}>
-                  <StatsCard
-                    title="Resumes Created"
+            <StatsCard
+              title="Resumes Created"
                     value={stats.resumesCreated.toString()}
-                    description="Total resumes in your account"
+              description="Total resumes in your account"
                     icon={<FileText className="h-5 w-5 text-primary" />}
                     trend="+1 this month"
                     trendUp={true}
-                  />
+            />
                 </motion.div>
 
                 <motion.div variants={itemVariants}>
-                  <StatsCard
-                    title="Average ATS Score"
+            <StatsCard
+              title="Average ATS Score"
                     value={`${stats.averageScore}%`}
-                    description="Based on all your resumes"
+              description="Based on all your resumes"
                     icon={<Award className="h-5 w-5 text-primary" />}
                     trend="+5% improvement"
                     trendUp={true}
-                  />
+            />
                 </motion.div>
 
                 <motion.div variants={itemVariants}>
-                  <StatsCard
+            <StatsCard
                     title="AI Optimizations"
                     value={stats.optimizations.toString()}
-                    description="AI suggestions applied"
+              description="AI suggestions applied"
                     icon={<Zap className="h-5 w-5 text-primary" />}
                     trend="3 pending"
                     trendUp={false}
@@ -213,30 +207,30 @@ export default function DashboardPage() {
               </motion.div>
 
               <motion.div variants={containerVariants} initial="hidden" animate="show" className="mb-8">
-                <Tabs defaultValue="resumes" className="mb-8">
-                  <TabsList>
-                    <TabsTrigger value="resumes">My Resumes</TabsTrigger>
-                    <TabsTrigger value="templates">Templates</TabsTrigger>
-                    <TabsTrigger value="analytics">Analytics</TabsTrigger>
+          <Tabs defaultValue="resumes" className="mb-8">
+            <TabsList>
+              <TabsTrigger value="resumes">My Resumes</TabsTrigger>
+              <TabsTrigger value="templates">Templates</TabsTrigger>
+              <TabsTrigger value="analytics">Analytics</TabsTrigger>
                     <TabsTrigger value="jobs">Job Matches</TabsTrigger>
-                  </TabsList>
+            </TabsList>
 
-                  <TabsContent value="resumes" className="mt-6">
+            <TabsContent value="resumes" className="mt-6">
                     <DashboardResumes resumes={resumes} />
-                  </TabsContent>
+            </TabsContent>
 
-                  <TabsContent value="templates" className="mt-6">
+            <TabsContent value="templates" className="mt-6">
                     <DashboardTemplates />
-                  </TabsContent>
+            </TabsContent>
 
-                  <TabsContent value="analytics" className="mt-6">
+            <TabsContent value="analytics" className="mt-6">
                     <DashboardAnalytics />
                   </TabsContent>
 
                   <TabsContent value="jobs" className="mt-6">
                     <DashboardJobs />
-                  </TabsContent>
-                </Tabs>
+            </TabsContent>
+          </Tabs>
               </motion.div>
 
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

@@ -23,13 +23,13 @@ interface PersonalInfoFormProps {
   profile: {
     name: string;
     email: string;
-    jobTitle: string;
-    location: string;
-    phone: string;
-    websiteUrl: string;
-    linkedinUrl: string;
-    githubUrl: string;
-    bio: string;
+    jobTitle: string | null;
+    location: string | null;
+    phone: string | null;
+    websiteUrl: string | null;
+    linkedinUrl: string | null;
+    githubUrl: string | null;
+    bio: string | null;
   };
   isUpdating: boolean;
   onProfileChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
@@ -82,7 +82,7 @@ export function PersonalInfoForm({ profile, isUpdating, onProfileChange, onSubmi
                 <Input
                   id="jobTitle"
                   name="jobTitle"
-                  value={profile.jobTitle}
+                  value={profile.jobTitle || ""}
                   onChange={onProfileChange}
                   className="pl-10"
                 />
@@ -95,7 +95,7 @@ export function PersonalInfoForm({ profile, isUpdating, onProfileChange, onSubmi
                 <Input
                   id="location"
                   name="location"
-                  value={profile.location}
+                  value={profile.location || ""}
                   onChange={onProfileChange}
                   className="pl-10"
                 />
@@ -108,7 +108,7 @@ export function PersonalInfoForm({ profile, isUpdating, onProfileChange, onSubmi
                 <Input
                   id="phone"
                   name="phone"
-                  value={profile.phone}
+                  value={profile.phone || ""}
                   onChange={onProfileChange}
                   className="pl-10"
                 />
@@ -121,7 +121,7 @@ export function PersonalInfoForm({ profile, isUpdating, onProfileChange, onSubmi
                 <Input
                   id="websiteUrl"
                   name="websiteUrl"
-                  value={profile.websiteUrl}
+                  value={profile.websiteUrl || ""}
                   onChange={onProfileChange}
                   className="pl-10"
                 />
@@ -134,7 +134,7 @@ export function PersonalInfoForm({ profile, isUpdating, onProfileChange, onSubmi
                 <Input
                   id="linkedinUrl"
                   name="linkedinUrl"
-                  value={profile.linkedinUrl}
+                  value={profile.linkedinUrl || ""}
                   onChange={onProfileChange}
                   className="pl-10"
                 />
@@ -147,7 +147,7 @@ export function PersonalInfoForm({ profile, isUpdating, onProfileChange, onSubmi
                 <Input
                   id="githubUrl"
                   name="githubUrl"
-                  value={profile.githubUrl}
+                  value={profile.githubUrl || ""}
                   onChange={onProfileChange}
                   className="pl-10"
                 />
@@ -160,7 +160,7 @@ export function PersonalInfoForm({ profile, isUpdating, onProfileChange, onSubmi
             <Textarea
               id="bio"
               name="bio"
-              value={profile.bio}
+              value={profile.bio || ""}
               onChange={onProfileChange}
               className="min-h-[100px]"
             />

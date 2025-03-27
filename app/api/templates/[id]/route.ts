@@ -12,11 +12,11 @@ interface RouteParams {
 // Fetch a specific template by ID
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
     // Access id directly from params to avoid destructuring warning
-    const id = params.id;
+    const id = context.params.id;
     
     if (!id) {
       return NextResponse.json(
@@ -68,10 +68,10 @@ export async function GET(
 
 // PATCH /api/templates/[id]
 // Update a specific template (admin only)
-export async function PATCH(req: NextRequest, { params }: RouteParams) {
+export async function PATCH(req: NextRequest, context: { params: { id: string } }) {
   try {
     // Access id directly from params to avoid destructuring warning
-    const id = params.id;
+    const id = context.params.id;
     
     // Validate ID
     if (!id) {
@@ -131,7 +131,7 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
     
     return NextResponse.json(updatedTemplate);
   } catch (error) {
-    console.error(`Error updating template with ID ${params.id}:`, error);
+    console.error(`Error updating template with ID ${context.params.id}:`, error);
     return NextResponse.json(
       { error: 'Failed to update template' },
       { status: 500 }
@@ -141,10 +141,10 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
 
 // DELETE /api/templates/[id]
 // Delete a specific template (admin only)
-export async function DELETE(req: NextRequest, { params }: RouteParams) {
+export async function DELETE(req: NextRequest, context: { params: { id: string } }) {
   try {
     // Access id directly from params to avoid destructuring warning
-    const id = params.id;
+    const id = context.params.id;
     
     // Validate ID
     if (!id) {
@@ -215,7 +215,7 @@ export async function DELETE(req: NextRequest, { params }: RouteParams) {
       { status: 200 }
     );
   } catch (error) {
-    console.error(`Error deleting template with ID ${params.id}:`, error);
+    console.error(`Error deleting template with ID ${context.params.id}:`, error);
     return NextResponse.json(
       { error: 'Failed to delete template' },
       { status: 500 }

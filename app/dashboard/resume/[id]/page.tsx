@@ -113,9 +113,9 @@ export default function ResumePage({ params }: { params: { id: string | Promise<
   if (initialLoadAttempted && isLoading) {
     return (
       <div className="flex min-h-screen bg-muted/30">
-        <DashboardSidebar />
+        {/* <DashboardSidebar /> */}
         <div className="flex-1">
-          <DashboardHeader />
+          {/* <DashboardHeader /> */}
           <main className="p-6">
             <div className="flex flex-col items-center justify-center min-h-[70vh]">
               <div className="text-center">
@@ -140,9 +140,9 @@ export default function ResumePage({ params }: { params: { id: string | Promise<
   if (errorMessage) {
     return (
       <div className="flex min-h-screen bg-muted/30">
-        <DashboardSidebar />
+        {/* <DashboardSidebar /> */}
         <div className="flex-1">
-          <DashboardHeader />
+          {/* <DashboardHeader /> */}
           <main className="p-6">
             <div className="flex flex-col items-center justify-center min-h-[70vh]">
               <div className="text-center">

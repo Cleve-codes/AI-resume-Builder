@@ -23,10 +23,8 @@ export default function SupportPage() {
 
   return (
     <div className="flex min-h-screen bg-muted/30">
-      <DashboardSidebar />
 
       <div className="flex-1">
-        <DashboardHeader />
 
         <main className="p-6">
           <div className="container mx-auto px-4 py-8">

@@ -34,7 +34,7 @@ const ContactInfoSchema = z.object({
 // PUT /api/resumes/[id]/contact-info - Update contact info
 export async function PUT(
   request: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
   try {
     const user = await getCurrentUser(request);
@@ -47,7 +47,7 @@ export async function PUT(
     }
     
     const resumeService = new ResumeService();
-    const resume = await resumeService.getResumeById(context.params.id);
+    const resume = await resumeService.getResumeById(params.id);
     
     if (!resume) {
       return NextResponse.json(
@@ -77,7 +77,7 @@ export async function PUT(
     }
     
     const contactInfo = await resumeService.upsertContactInfo(
-      context.params.id, 
+      params.id, 
       {
         fullName: validation.data.fullName,
         email: validation.data.email,

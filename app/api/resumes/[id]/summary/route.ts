@@ -27,7 +27,7 @@ const SummarySchema = z.object({
 // PUT /api/resumes/[id]/summary - Update summary
 export async function PUT(
   request: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
   try {
     const user = await getCurrentUser(request);
@@ -40,7 +40,7 @@ export async function PUT(
     }
     
     const resumeService = new ResumeService();
-    const resume = await resumeService.getResumeById(context.params.id);
+    const resume = await resumeService.getResumeById(params.id);
     
     if (!resume) {
       return NextResponse.json(
@@ -69,7 +69,7 @@ export async function PUT(
       );
     }
     
-    const summary = await resumeService.upsertSummary(context.params.id, validation.data.content);
+    const summary = await resumeService.upsertSummary(params.id, validation.data.content);
     
     return NextResponse.json(summary);
   } catch (error) {

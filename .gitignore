@@ -27,3 +27,5 @@ yarn-error.log*
 next-env.d.ts
 
 /scripts/node_modules
+# clerk configuration (can include secrets)
+/.clerk/

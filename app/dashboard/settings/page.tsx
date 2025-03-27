@@ -132,10 +132,10 @@ export default function SettingsPage() {
 
   return (
     <div className="flex min-h-screen bg-muted/30">
-      <DashboardSidebar />
+      {/* <DashboardSidebar /> */}
 
       <div className="flex-1">
-        <DashboardHeader />
+        {/* <DashboardHeader /> */}
 
         <main className="p-6">
           <motion.div

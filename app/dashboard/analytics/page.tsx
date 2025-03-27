@@ -30,10 +30,10 @@ export default function AnalyticsPage() {
 
   return (
     <div className="flex min-h-screen bg-muted/30">
-      <DashboardSidebar />
+      {/* <DashboardSidebar /> */}
 
       <div className="flex-1">
-        <DashboardHeader />
+        {/* <DashboardHeader /> */}
 
         <main className="p-6">
           <div className="container py-6 space-y-6 max-w-7xl">

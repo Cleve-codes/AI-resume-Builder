@@ -99,9 +99,9 @@ export default async function ResumeEditPage({ params }: ResumeEditPageProps) {
     
     return (
       <div className="grid min-h-screen w-full lg:grid-cols-[280px_1fr]">
-        <DashboardSidebar />
+        {/* <DashboardSidebar /> */}
         <div className="flex flex-col">
-          <DashboardHeader />
+          {/* <DashboardHeader /> */}
           <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-6">
             <h1 className="text-2xl font-bold mb-6">Edit Resume: {resume.title}</h1>
             <ClientResumeEditor 
@@ -118,9 +118,9 @@ export default async function ResumeEditPage({ params }: ResumeEditPageProps) {
     console.error('Error loading resume for editing:', error);
     return (
       <div className="grid min-h-screen w-full lg:grid-cols-[280px_1fr]">
-        <DashboardSidebar />
+        {/* <DashboardSidebar /> */}
         <div className="flex flex-col">
-          <DashboardHeader />
+          {/* <DashboardHeader /> */}
           <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-6">
             <h1 className="text-2xl font-bold mb-6">Error</h1>
             <div className="bg-red-50 p-4 rounded-md border border-red-200">

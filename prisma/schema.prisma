@@ -30,6 +30,10 @@ model User {
   linkedinUrl       String?
   websiteUrl        String?
   
+  // Clerk integration
+  clerkId           String?   @unique
+  active            Boolean   @default(true)
+  
   // User roles and permissions
   isAdmin           Boolean   @default(false)
   isPremium         Boolean   @default(false)

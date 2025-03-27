@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { motion } from "framer-motion"
 import { User, Settings, ChevronRight } from "lucide-react"
@@ -32,22 +32,9 @@ const itemVariants = {
   show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } },
 }
 
-// Define user profile type to match Prisma schema fields
-interface UserProfile {
-  name: string;
-  email: string;
-  jobTitle: string | null;
-  location: string | null;
-  phone: string | null;
-  linkedinUrl: string | null;
-  websiteUrl: string | null;
-  githubUrl?: string | null;
-  bio?: string | null;
-  profileImage: string | null; // Changed to null to match Prisma schema
-}
-
 export default function ProfilePage() {
   const router = useRouter()
+  // Clerk uses isLoaded, not isLoading
   const { user, isLoaded } = useUser()
   const {
     activeTab,
@@ -86,19 +73,20 @@ export default function ProfilePage() {
       try {
         setIsFetching(true)
 
-        // Fetch user data from Clerk without depending on current profile state
+        // Fetch user data from Clerk
         setProfile({
-          // Handle null safety with optional chaining
+          // Create full name from firstName and lastName
           name: `${user?.firstName || ''} ${user?.lastName || ''}`.trim(),
+          // Use primaryEmailAddress instead of emailAddresses array
           email: user?.primaryEmailAddress?.emailAddress ?? "",
           profileImage: user?.imageUrl || null,
-          jobTitle: null, // Initialize with null rather than depending on current profile state
-          location: null,
-          phone: null,
-          websiteUrl: null,
-          linkedinUrl: null,
-          githubUrl: null,
-          bio: null,
+          jobTitle: profile.jobTitle || null,
+          location: profile.location || null,
+          phone: profile.phone || null,
+          websiteUrl: profile.websiteUrl || null,
+          linkedinUrl: profile.linkedinUrl || null,
+          githubUrl: profile.githubUrl || null,
+          bio: profile.bio || null,
         })
 
         setFetchError(null)
@@ -113,15 +101,15 @@ export default function ProfilePage() {
     }
 
     fetchUserProfile()
-  }, [user, isLoaded, router, setFetchError, setIsFetching, setProfile])
+  }, [user, isLoaded, router, setFetchError, setIsFetching, setProfile, setStatistics])
 
   // Show loading state
   if (!isLoaded || isFetching) {
     return (
       <div className="flex min-h-screen bg-muted/30">
-        {/* <DashboardSidebar /> */}
+        <DashboardSidebar />
         <div className="flex-1">
-          {/* <DashboardHeader /> */}
+          <DashboardHeader />
           <main className="p-6 flex items-center justify-center">
             <div className="text-center">
               <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-4"></div>
@@ -141,9 +129,9 @@ export default function ProfilePage() {
   if (fetchError) {
     return (
       <div className="flex min-h-screen bg-muted/30">
-        {/* <DashboardSidebar /> */}
+        <DashboardSidebar />
         <div className="flex-1">
-          {/* <DashboardHeader /> */}
+          <DashboardHeader />
           <main className="p-6">
             <motion.div
               initial={{ opacity: 0, y: 10 }}
@@ -185,10 +173,10 @@ export default function ProfilePage() {
   // Default case: user authenticated and data loaded
   return (
     <div className="flex min-h-screen bg-muted/30">
-      {/* <DashboardSidebar /> */}
+      <DashboardSidebar />
 
       <div className="flex-1">
-        {/* <DashboardHeader /> */}
+        <DashboardHeader />
 
         <main className="p-6">
           <motion.div
@@ -222,7 +210,6 @@ export default function ProfilePage() {
                     email: profile.email,
                     jobTitle: profile.jobTitle ?? "",
                     location: profile.location ?? "",
-                    // Convert null to undefined for the component
                     profileImage: profile.profileImage || undefined,
                   }}
                   statistics={statistics}
@@ -253,5 +240,5 @@ export default function ProfilePage() {
         </main>
       </div>
     </div>
-  );
+  )
 }

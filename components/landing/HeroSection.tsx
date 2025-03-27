@@ -23,7 +23,7 @@ export const HeroSection = () => {
               Our AI-powered resume builder helps you create ATS-friendly resumes tailored to specific job descriptions. Get instant feedback, suggestions, and improvements to maximize your chances of landing interviews.
             </p>
             <div className="mt-8 sm:max-w-lg sm:mx-auto lg:mx-0">
-              <Link href="/signup">
+              <Link href="/sign-up">
               <button className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-lg text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transition-all hover:shadow-xl transform hover:-translate-y-0.5">
                 Build Your Resume Now
                 <ArrowRight className="ml-2 h-5 w-5" />

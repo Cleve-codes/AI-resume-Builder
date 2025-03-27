@@ -72,12 +72,12 @@ export default async function TemplatesPage() {
   return (
       <div className="flex min-h-screen bg-slate-50">
         {/* Sidebar */}
-        <DashboardSidebar />
+        {/* <DashboardSidebar /> */}
         
         {/* Main Content Area */}
         <div className="flex-1">
           {/* Header */}
-          <DashboardHeader />
+          {/* <DashboardHeader /> */}
           
           {/* Page Content */}
           <main className="p-6 lg:p-8 pt-20">

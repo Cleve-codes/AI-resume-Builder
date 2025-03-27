@@ -1,5 +1,5 @@
-import FixedProfilePage from "./FixedProfilePage"
+// import FixedProfilePage from "./FixedProfilePage"
 
-export default function FixedProfilePageWrapper() {
-  return <FixedProfilePage />
-} 
+// export default function FixedProfilePageWrapper() {
+//   return <FixedProfilePage />
+// } 

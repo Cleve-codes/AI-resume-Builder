@@ -7,12 +7,12 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { FileText, LayoutDashboard, FileUp, Briefcase, BarChart, Settings, HelpCircle, LogOut, Menu, X, User } from "lucide-react";
-import { useAuth } from "@/lib/context/auth-context";
+import { useClerk } from "@clerk/nextjs";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 
 export default function DashboardSidebar() {
   const pathname = usePathname();
-  const { logout } = useAuth();
+  const { signOut } = useClerk();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
@@ -23,8 +23,8 @@ export default function DashboardSidebar() {
 
   const handleLogout = async () => {
     try {
-      await logout();
-      // The redirect is handled inside the logout function
+      await signOut();
+      // Clerk will handle the redirect
     } catch (error) {
       console.error("Logout failed:", error);
     }

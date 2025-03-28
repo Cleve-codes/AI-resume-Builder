@@ -20,180 +20,193 @@ function UrlParamsHandler({
   const searchParams = useSearchParams();
   
   useEffect(() => {
-    const tokenFromUrl = searchParams.get("token");
-    const emailFromUrl = searchParams.get("email");
-    onParamsReady(tokenFromUrl, emailFromUrl);
+    // Extract token and email from URL
+    const token = searchParams.get('token');
+    const email = searchParams.get('email');
+    
+    // Call the callback with the params
+    onParamsReady(token, email);
   }, [searchParams, onParamsReady]);
   
   return null;
 }
 
 export default function VerifyEmailPage() {
-  const [token, setToken] = useState<string | null>(null);
-  const [email, setEmail] = useState<string | null>(null);
-  const [verificationStatus, setVerificationStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
-  const [resendStatus, setResendStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const router = useRouter();
-  const { user, isLoaded } = useUser();
-  
-  // Function to handle parameter changes from the URL
-  const handleParamsReady = (tokenParam: string | null, emailParam: string | null) => {
-    setToken(tokenParam);
-    setEmail(emailParam);
+  const { isLoaded, isSignedIn } = useUser();
+  const [email, setEmail] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null>(null);
+  const [verificationStatus, setVerificationStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [resendStatus, setResendStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // Handle URL parameters from the UrlParamsHandler
+  const handleParamsReady = (receivedToken: string | null, receivedEmail: string | null) => {
+    setToken(receivedToken);
+    setEmail(receivedEmail);
     
-    // If we have both token and email, auto-verify
-    if (tokenParam && emailParam) {
-      handleVerify(tokenParam);
-    }
-  };
-  
-  // Function to handle email verification
-  const handleVerify = async (verificationToken: string) => {
-    setVerificationStatus("loading");
-    
-    try {
-      // With Clerk, email verification is handled automatically
-      toast.success("Your email has been verified successfully!");
-      setVerificationStatus("success");
-      
-      // Redirect to dashboard after 2 seconds
-      setTimeout(() => {
-        router.push("/dashboard");
-      }, 2000);
-    } catch (error) {
-      console.error("Verification error:", error);
-      setVerificationStatus("error");
-      toast.error("Failed to verify your email. Please try again or contact support.");
-    }
-  };
-  
-  // Function to handle resending verification email
-  const handleResend = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setResendStatus("loading");
-    
-    try {
-      // In Clerk, you would use their API to resend verification
-      // For now, we'll just show a success message
-      toast.success("Verification email sent successfully!");
-      setResendStatus("success");
-    } catch (error) {
-      console.error("Resend error:", error);
-      setResendStatus("error");
-      toast.error("Failed to send verification email. Please try again.");
-    } finally {
-      setTimeout(() => {
-        setResendStatus("idle");
-      }, 3000);
+    // Auto-verify if token is present
+    if (receivedToken) {
+      verifyEmail(receivedToken);
     }
   };
 
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-blue-50 to-white p-4">
-      <UrlParamsHandler onParamsReady={handleParamsReady} />
+  // Check if user is already signed in
+  useEffect(() => {
+    if (isLoaded && isSignedIn) {
+      // Already signed in, redirect to dashboard
+      router.push('/dashboard');
+    }
+  }, [isLoaded, isSignedIn, router]);
+
+  // Function to verify email
+  const verifyEmail = async (verificationToken: string) => {
+    setVerificationStatus('loading');
+    setErrorMessage(null);
+    
+    try {
+      // In a real app, this would call your API endpoint
+      // await fetch('/api/auth/verify-email', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({ token: verificationToken }),
+      // });
       
-      <Card className="w-full max-w-md border-blue-100">
-        <CardHeader className="space-y-1 text-center pb-4">
-          <CardTitle className="text-2xl font-bold">Email Verification</CardTitle>
-          <CardDescription className="text-gray-500">
-            {verificationStatus === "success"
-              ? "Thank you for verifying your email address. You will be redirected to the dashboard."
-              : verificationStatus === "error"
-              ? "There was a problem verifying your email. Please try again or request a new verification link."
-              : "Please check your inbox for the verification email. You'll need to verify your email before accessing your account."}
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Success
+      setVerificationStatus('success');
+      
+      // Redirect to sign-in after success (in a real app)
+      setTimeout(() => {
+        router.push('/sign-in');
+      }, 3000);
+    } catch (error) {
+      console.error('Error verifying email:', error);
+      setVerificationStatus('error');
+      setErrorMessage('Failed to verify your email. Please try again or contact support.');
+    }
+  };
+  
+  // Function to resend verification email
+  const resendVerificationEmail = async (emailAddress: string) => {
+    setResendStatus('loading');
+    setErrorMessage(null);
+    
+    try {
+      // In a real app, this would call your API endpoint
+      // await fetch('/api/auth/resend-verification', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({ email: emailAddress }),
+      // });
+      
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Success
+      setResendStatus('success');
+      toast.success('Verification email sent successfully!');
+    } catch (error) {
+      console.error('Error resending verification email:', error);
+      setResendStatus('error');
+      setErrorMessage('Failed to resend verification email. Please try again or contact support.');
+      toast.error('Failed to send verification email');
+    }
+  };
+  
+  // If no token or email provided, show manual verification form
+  const showManualForm = !token || verificationStatus === 'error';
+  
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
+      <Card className="w-full max-w-md">
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-2xl font-bold text-center">Email Verification</CardTitle>
+          <CardDescription className="text-center">
+            {token 
+              ? 'We are verifying your email address' 
+              : 'Please verify your email address to continue'}
           </CardDescription>
         </CardHeader>
         
         <CardContent>
-          <div className="flex justify-center mb-6">
-            {verificationStatus === "success" ? (
-              <div className="bg-green-100 text-green-700 p-3 rounded-full">
-                <CheckCircle2Icon className="h-12 w-12" />
-              </div>
-            ) : verificationStatus === "error" ? (
-              <div className="bg-red-100 text-red-700 p-3 rounded-full">
-                <AlertCircleIcon className="h-12 w-12" />
-              </div>
-            ) : (
-              <div className="bg-blue-100 text-blue-700 p-3 rounded-full">
-                <MailIcon className="h-12 w-12" />
-              </div>
-            )}
-          </div>
+          {/* URL Parameter Handling */}
+          <Suspense fallback={<div>Loading parameters...</div>}>
+            <UrlParamsHandler onParamsReady={handleParamsReady} />
+          </Suspense>
           
-          {verificationStatus !== "success" && (
-            <div className="space-y-4">
-              {token ? (
-                <div className="flex justify-center">
-                  {verificationStatus === "loading" ? (
-                    <Button disabled>
-                      <LoaderIcon className="mr-2 h-4 w-4 animate-spin" />
-                      Verifying...
-                    </Button>
-                  ) : (
-                    <Button onClick={() => handleVerify(token)}>
-                      Verify Again
-                    </Button>
-                  )}
-                </div>
-              ) : (
-                <div>
-                  <form className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Your Email Address</Label>
-                      <Input 
-                        id="email" 
-                        type="email"
-                        placeholder="Enter your email address"
-                        value={email || ""}
-                        onChange={(e) => setEmail(e.target.value)}
-                        disabled={resendStatus === "loading"}
-                      />
-                    </div>
-                    
-                    <Button 
-                      className="w-full" 
-                      onClick={handleResend}
-                      disabled={resendStatus === "loading"}
-                    >
-                      {resendStatus === "loading" ? (
-                        <>
-                          <LoaderIcon className="mr-2 h-4 w-4 animate-spin" />
-                          Sending...
-                        </>
-                      ) : (
-                        <>
-                          <MailIcon className="mr-2 h-4 w-4" />
-                          Resend Verification Email
-                        </>
-                      )}
-                    </Button>
-                  </form>
-                </div>
+          {/* Verification Status States */}
+          {verificationStatus === 'loading' && (
+            <div className="text-center py-8">
+              <LoaderIcon className="h-12 w-12 mx-auto animate-spin text-blue-600" />
+              <p className="mt-4 text-gray-600">Verifying your email...</p>
+            </div>
+          )}
+          
+          {verificationStatus === 'success' && (
+            <div className="text-center py-8">
+              <CheckCircle2Icon className="h-12 w-12 mx-auto text-green-500" />
+              <p className="mt-4 text-gray-600">Email verified successfully!</p>
+              <p className="mt-2 text-gray-500">Redirecting you to sign in...</p>
+            </div>
+          )}
+          
+          {verificationStatus === 'error' && (
+            <div className="text-center py-4">
+              <AlertCircleIcon className="h-12 w-12 mx-auto text-red-500" />
+              <p className="mt-4 text-red-600">{errorMessage || 'Verification failed'}</p>
+              <p className="mt-2 text-gray-500">Please try again or request a new verification link</p>
+            </div>
+          )}
+          
+          {/* Manual Verification Form */}
+          {showManualForm && verificationStatus !== 'loading' && (
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">Email Address</Label>
+                <Input 
+                  id="email" 
+                  placeholder="Enter your email address" 
+                  type="email" 
+                  value={email || ''} 
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={resendStatus === 'loading'}
+                />
+              </div>
+              
+              <Button 
+                className="w-full" 
+                onClick={() => email && resendVerificationEmail(email)}
+                disabled={!email || resendStatus === 'loading'}
+              >
+                {resendStatus === 'loading' ? (
+                  <>
+                    <LoaderIcon className="mr-2 h-4 w-4 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <MailIcon className="mr-2 h-4 w-4" /> 
+                    Resend Verification Email
+                  </>
+                )}
+              </Button>
+              
+              {resendStatus === 'success' && (
+                <p className="text-sm text-green-500 mt-2">
+                  A new verification email has been sent. Please check your inbox.
+                </p>
               )}
             </div>
           )}
         </CardContent>
         
-        <CardFooter className="flex flex-col space-y-4">
-          <div className="text-center text-sm text-gray-500 w-full">
-            {verificationStatus === "success" ? (
-              <p>You'll be redirected to the dashboard in a few seconds...</p>
-            ) : (
-              <p>
-                Already verified your email?{' '}
-                <Link href="/dashboard" className="text-blue-600 hover:underline">
-                  Go to Dashboard <ArrowRightIcon className="h-3 w-3 inline" />
-                </Link>
-              </p>
-            )}
-          </div>
-          
-          <div className="text-center text-sm text-gray-500 w-full border-t pt-4">
-            <Link href="/sign-in" className="text-blue-600 hover:underline">
-              Back to Sign In
-            </Link>
-          </div>
+        <CardFooter className="flex justify-center border-t pt-4">
+          <Link href="/sign-in" className="text-sm text-blue-600 hover:underline flex items-center">
+            Return to sign in <ArrowRightIcon className="ml-1 h-4 w-4" />
+          </Link>
         </CardFooter>
       </Card>
     </div>

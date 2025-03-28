@@ -20,12 +20,10 @@ async function getCurrentUser(req: NextRequest) {
 }
 
 // GET /api/resumes/[id] - Get a specific resume
-export async function GET(
-  request: NextRequest,
-  params: { params: { id: string } }
-) {
+export async function GET(request: Request, props: { params: Promise<{ id: string }> }): Promise<NextResponse> {
+  const params = await props.params;
   try {
-    const user = await getCurrentUser(request);
+    const user = await getCurrentUser(request as unknown as NextRequest);
     
     if (!user) {
       return NextResponse.json(
@@ -35,7 +33,7 @@ export async function GET(
     }
     
     const resumeService = new ResumeService();
-    const resume = await resumeService.getResumeById(params.params.id);
+    const resume = await resumeService.getResumeById(params.id);
     
     if (!resume) {
       return NextResponse.json(
@@ -72,12 +70,10 @@ const UpdateResumeSchema = z.object({
 });
 
 // PUT /api/resumes/[id] - Update a resume
-export async function PUT(
-  request: NextRequest,
-  params: { params: { id: string } }
-) {
+export async function PUT(request: Request, props: { params: Promise<{ id: string }> }): Promise<NextResponse> {
+  const params = await props.params;
   try {
-    const user = await getCurrentUser(request);
+    const user = await getCurrentUser(request as unknown as NextRequest);
     
     if (!user) {
       return NextResponse.json(
@@ -87,7 +83,7 @@ export async function PUT(
     }
     
     const resumeService = new ResumeService();
-    const resume = await resumeService.getResumeById(params.params.id);
+    const resume = await resumeService.getResumeById(params.id);
     
     if (!resume) {
       return NextResponse.json(
@@ -116,7 +112,7 @@ export async function PUT(
       );
     }
     
-    const updatedResume = await resumeService.updateResume(params.params.id, validation.data);
+    const updatedResume = await resumeService.updateResume(params.id, validation.data);
     
     return NextResponse.json(updatedResume);
   } catch (error) {
@@ -130,12 +126,10 @@ export async function PUT(
 }
 
 // DELETE /api/resumes/[id] - Delete a resume
-export async function DELETE(
-  request: NextRequest,
-  params: { params: { id: string } }
-) {
+export async function DELETE(request: Request, props: { params: Promise<{ id: string }> }): Promise<NextResponse> {
+  const params = await props.params;
   try {
-    const user = await getCurrentUser(request);
+    const user = await getCurrentUser(request as unknown as NextRequest);
     
     if (!user) {
       return NextResponse.json(
@@ -145,7 +139,7 @@ export async function DELETE(
     }
     
     const resumeService = new ResumeService();
-    const resume = await resumeService.getResumeById(params.params.id);
+    const resume = await resumeService.getResumeById(params.id);
     
     if (!resume) {
       return NextResponse.json(
@@ -162,7 +156,7 @@ export async function DELETE(
       );
     }
     
-    await resumeService.deleteResume(params.params.id);
+    await resumeService.deleteResume(params.id);
     
     return NextResponse.json(
       { message: 'Resume deleted successfully' },

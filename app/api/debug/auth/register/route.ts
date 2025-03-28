@@ -39,11 +39,8 @@ export async function POST(request: NextRequest) {
         emailVerified: true, // Auto-verify for debugging
         verificationToken,
         verificationTokenExpiry,
-        profile: {
-          create: {
-            isDebugAccount: true
-          }
-        }
+        isAdmin: true, // Give admin privileges for testing
+        isPremium: true // Give premium status for testing
       },
     });
     

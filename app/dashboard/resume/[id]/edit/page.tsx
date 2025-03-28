@@ -33,20 +33,21 @@ export const metadata: Metadata = {
 };
 
 interface ResumeEditPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
-export default async function ResumeEditPage({ params }: ResumeEditPageProps) {
+export default async function ResumeEditPage(props: ResumeEditPageProps) {
+  const params = await props.params;
   const user = await getServerSideUser();
-  
+
   if (!user) {
     redirect('/login?callbackUrl=/dashboard/resume');
   }
 
   const userId = user.id;
-  
+
   try {
     // Fetch the resume from the database
     const resume = await prisma.resume.findUnique({

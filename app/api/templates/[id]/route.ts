@@ -2,21 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getCurrentUserFromRequest } from '@/lib/auth';
 
-interface RouteParams {
-  params: {
-    id: string;
-  };
-}
-
 // GET /api/templates/[id]
 // Fetch a specific template by ID
-export async function GET(
-  request: NextRequest,
-  params: { params: { id: string } }
-) {
+export async function GET(request: Request, props: { params: Promise<{ id: string }> }): Promise<NextResponse> {
+  const params = await props.params;
   try {
     // Access id directly from params to avoid destructuring warning
-    const id = params.params.id;
+    const id = params.id;
     
     if (!id) {
       return NextResponse.json(
@@ -26,7 +18,7 @@ export async function GET(
     }
 
     // Get the current user (optional)
-    const user = await getCurrentUserFromRequest(request);
+    const user = await getCurrentUserFromRequest(request as unknown as NextRequest);
     const userIsPremium = user?.isPremium || false;
 
     // Fetch the template
@@ -68,10 +60,11 @@ export async function GET(
 
 // PATCH /api/templates/[id]
 // Update a specific template (admin only)
-export async function PATCH(req: NextRequest, params: RouteParams) {
+export async function PATCH(req: Request, props: { params: Promise<{ id: string }> }): Promise<NextResponse> {
+  const params = await props.params;
   try {
     // Access id directly from params to avoid destructuring warning
-    const id = params.params.id;
+    const id = params.id;
     
     // Validate ID
     if (!id) {
@@ -82,7 +75,7 @@ export async function PATCH(req: NextRequest, params: RouteParams) {
     }
     
     // Check if user is authenticated
-    const user = getCurrentUserFromRequest(req);
+    const user = getCurrentUserFromRequest(req as unknown as NextRequest);
     
     if (!user) {
       return NextResponse.json(
@@ -131,7 +124,7 @@ export async function PATCH(req: NextRequest, params: RouteParams) {
     
     return NextResponse.json(updatedTemplate);
   } catch (error) {
-    console.error(`Error updating template with ID ${params.params.id}:`, error);
+    console.error(`Error updating template with ID ${params.id}:`, error);
     return NextResponse.json(
       { error: 'Failed to update template' },
       { status: 500 }
@@ -141,10 +134,11 @@ export async function PATCH(req: NextRequest, params: RouteParams) {
 
 // DELETE /api/templates/[id]
 // Delete a specific template (admin only)
-export async function DELETE(req: NextRequest, params: RouteParams) {
+export async function DELETE(req: Request, props: { params: Promise<{ id: string }> }): Promise<NextResponse> {
+  const params = await props.params;
   try {
     // Access id directly from params to avoid destructuring warning
-    const id = params.params.id;
+    const id = params.id;
     
     // Validate ID
     if (!id) {
@@ -155,7 +149,7 @@ export async function DELETE(req: NextRequest, params: RouteParams) {
     }
     
     // Check if user is authenticated
-    const user = getCurrentUserFromRequest(req);
+    const user = getCurrentUserFromRequest(req as unknown as NextRequest);
     
     if (!user) {
       return NextResponse.json(
@@ -215,7 +209,7 @@ export async function DELETE(req: NextRequest, params: RouteParams) {
       { status: 200 }
     );
   } catch (error) {
-    console.error(`Error deleting template with ID ${params.params.id}:`, error);
+    console.error(`Error deleting template with ID ${params.id}:`, error);
     return NextResponse.json(
       { error: 'Failed to delete template' },
       { status: 500 }

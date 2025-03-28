@@ -68,7 +68,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (email: string, password: string) => {
     setError(null);
     try {
-      await clerk.signIn.create({
+      // Use the client.signIn method from Clerk
+      await clerk.client.signIn.create({
         identifier: email,
         password,
       });
@@ -87,7 +88,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const register = async (name: string, email: string, password: string) => {
     setError(null);
     try {
-      await clerk.signUp.create({
+      // Use the client.signUp method from Clerk
+      await clerk.client.signUp.create({
         firstName: name.split(' ')[0],
         lastName: name.split(' ').slice(1).join(' '),
         emailAddress: email,

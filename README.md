@@ -54,7 +54,7 @@ Resume AI is an intelligent, AI-powered platform that helps professionals create
 ## Tech Stack
 
 ### Frontend
-- [Next.js 14](https://nextjs.org/) with App Router architecture
+- [Next.js 15](https://nextjs.org/) with App Router architecture
 - [React](https://reactjs.org/)
 - [TypeScript](https://www.typescriptlang.org/)
 - [Tailwind CSS](https://tailwindcss.com/) for styling

@@ -6,8 +6,18 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Loader2, User, FileText, Briefcase, GraduationCap, Award, Code, Languages, Plus } from 'lucide-react';
 
+// Define types for our dynamically imported components
+type ResumeEditorProps = {
+  initialData: ResumeData;
+  onFieldChange: (section: string, index: number, field: string, value: string) => void;
+};
+
+type TemplateComponentProps = {
+  data: ResumeData;
+};
+
 // Import these if available, otherwise use placeholders
-let ResumeEditor;
+let ResumeEditor: React.ComponentType<ResumeEditorProps>;
 try {
   ResumeEditor = require('@/components/resume-editor').default;
 } catch (error) {
@@ -24,8 +34,8 @@ try {
 }
 
 // Import template components if available
-let ProfessionalTemplate;
-let ModernTemplate;
+let ProfessionalTemplate: React.ComponentType<TemplateComponentProps>;
+let ModernTemplate: React.ComponentType<TemplateComponentProps>;
 try {
   ProfessionalTemplate = require('@/app/components/resume-templates/ProfessionalTemplate').default;
   ModernTemplate = require('@/app/components/resume-templates/ModernTemplate').default;

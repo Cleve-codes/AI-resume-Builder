@@ -9,11 +9,12 @@ export async function GET() {
     return NextResponse.json({
       status: 'Database connection successful',
       result: connectionTest,
-      clientVersion: prisma._clientVersion,
       environment: process.env.NODE_ENV,
       env: {
         DATABASE_URL: process.env.DATABASE_URL ? 'Set' : 'Not set',
         NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET ? 'Set' : 'Not set',
+        CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY ? 'Set' : 'Not set',
+        DEBUG_API_KEY: process.env.DEBUG_API_KEY ? 'Set' : 'Not set',
       }
     });
   } catch (error) {
@@ -27,6 +28,8 @@ export async function GET() {
       env: {
         DATABASE_URL: process.env.DATABASE_URL ? 'Set' : 'Not set',
         NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET ? 'Set' : 'Not set',
+        CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY ? 'Set' : 'Not set',
+        DEBUG_API_KEY: process.env.DEBUG_API_KEY ? 'Set' : 'Not set',
       }
     }, { status: 500 });
   }

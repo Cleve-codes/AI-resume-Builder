@@ -23,9 +23,9 @@ import ResumeEditorWithTemplate from "./components/ResumeEditorWithTemplate";
 import ResumePreviewWithTemplate from "./components/ResumePreviewWithTemplate";
 import { motion } from "framer-motion";
 
-export default function ResumePage({ params }: { params: { id: string | Promise<string> } }) {
+export default function ResumePage({ params }: { params: Promise<{ id: string }> }) {
   // Unwrap the params object first, then access the id property
-  const unwrappedParams = params instanceof Promise ? use(params) : params;
+  const unwrappedParams = use(params);
   const resumeId = unwrappedParams.id;
   
   const { toast } = useToast();

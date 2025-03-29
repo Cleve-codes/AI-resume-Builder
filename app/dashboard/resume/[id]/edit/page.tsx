@@ -43,7 +43,7 @@ export default async function ResumeEditPage(props: ResumeEditPageProps) {
   const user = await getServerSideUser();
 
   if (!user) {
-    redirect('/login?callbackUrl=/dashboard/resume');
+    redirect('/sign-in?callbackUrl=/dashboard/resume');
   }
 
   const userId = user.id;

@@ -6,14 +6,18 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { FileText, LayoutDashboard, FileUp, Briefcase, BarChart, Settings, HelpCircle, LogOut, Menu, X, User } from "lucide-react";
+import { FileText, LayoutDashboard, FileUp, Briefcase, BarChart, Settings, HelpCircle, LogOut, User } from "lucide-react";
 import { useClerk } from "@clerk/nextjs";
-import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 
-export default function DashboardSidebar() {
+interface DashboardSidebarProps {
+  isMobileOpen?: boolean;
+  setIsMobileOpen?: (open: boolean) => void;
+}
+
+export default function DashboardSidebar({ isMobileOpen, setIsMobileOpen }: DashboardSidebarProps) {
   const pathname = usePathname();
   const { signOut } = useClerk();
-  const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
   // Handle hydration mismatch
@@ -52,42 +56,42 @@ export default function DashboardSidebar() {
             icon={<LayoutDashboard className="h-5 w-5" />}
             label="Dashboard"
             active={pathname === "/dashboard"}
-            onClick={() => setIsMobileOpen(false)}
+            onClick={() => setIsMobileOpen?.(false)}
           />
           <NavItem
             href="/dashboard/resumes"
             icon={<FileText className="h-5 w-5" />}
             label="My Resumes"
             active={pathname.startsWith("/dashboard/resumes")}
-            onClick={() => setIsMobileOpen(false)}
+            onClick={() => setIsMobileOpen?.(false)}
           />
           <NavItem
             href="/dashboard/profile"
             icon={<User className="h-5 w-5" />}
             label="My Profile"
             active={pathname === "/dashboard/profile"}
-            onClick={() => setIsMobileOpen(false)}
+            onClick={() => setIsMobileOpen?.(false)}
           />
           <NavItem
             href="/dashboard/upload"
             icon={<FileUp className="h-5 w-5" />}
             label="Upload Resume"
             active={pathname === "/dashboard/upload"}
-            onClick={() => setIsMobileOpen(false)}
+            onClick={() => setIsMobileOpen?.(false)}
           />
           <NavItem
             href="/dashboard/jobs"
             icon={<Briefcase className="h-5 w-5" />}
             label="Job Matches"
             active={pathname.startsWith("/dashboard/jobs")}
-            onClick={() => setIsMobileOpen(false)}
+            onClick={() => setIsMobileOpen?.(false)}
           />
           <NavItem
             href="/dashboard/analytics"
             icon={<BarChart className="h-5 w-5" />}
             label="Analytics"
             active={pathname === "/dashboard/analytics"}
-            onClick={() => setIsMobileOpen(false)}
+            onClick={() => setIsMobileOpen?.(false)}
           />
         </nav>
 
@@ -99,14 +103,14 @@ export default function DashboardSidebar() {
               icon={<Settings className="h-5 w-5" />}
               label="Settings"
               active={pathname === "/dashboard/settings"}
-              onClick={() => setIsMobileOpen(false)}
+              onClick={() => setIsMobileOpen?.(false)}
             />
             <NavItem
               href="/dashboard/help"
               icon={<HelpCircle className="h-5 w-5" />}
               label="Help & Support"
               active={pathname === "/dashboard/help"}
-              onClick={() => setIsMobileOpen(false)}
+              onClick={() => setIsMobileOpen?.(false)}
             />
             <Button
               variant="ghost"
@@ -127,27 +131,17 @@ export default function DashboardSidebar() {
   return (
     <>
       {/* Desktop Sidebar */}
-      <div className="w-64 border-r bg-gradient-to-b from-white to-blue-50 hidden md:block">
+      <div className="w-64 border-r bg-gradient-to-b from-white to-blue-50 hidden md:block h-screen sticky top-0">
         <SidebarContent />
       </div>
 
-      {/* Mobile Menu Button */}
-      <div className="fixed bottom-4 right-4 z-50 md:hidden">
-        <Sheet open={isMobileOpen} onOpenChange={setIsMobileOpen}>
-          <SheetTrigger asChild>
-            <Button 
-              size="icon" 
-              className="bg-blue-600 hover:bg-blue-700 text-white rounded-full h-14 w-14 shadow-lg"
-            >
-              <Menu className="h-6 w-6" />
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="left" className="p-0 w-[80%] max-w-[280px] bg-gradient-to-b from-white to-blue-50">
-            <SheetTitle className="sr-only">Dashboard Navigation</SheetTitle>
-            <SidebarContent />
-          </SheetContent>
-        </Sheet>
-      </div>
+      {/* Mobile Sidebar with Sheet */}
+      <Sheet open={isMobileOpen} onOpenChange={setIsMobileOpen}>
+        <SheetContent side="left" className="p-0 w-[80%] max-w-[280px] bg-gradient-to-b from-white to-blue-50">
+          <SheetTitle className="sr-only">Dashboard Navigation</SheetTitle>
+          <SidebarContent />
+        </SheetContent>
+      </Sheet>
     </>
   );
 }

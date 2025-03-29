@@ -40,8 +40,8 @@ const protectedRoutes = [
 // List of routes that should never check auth status on load
 const publicRoutes = [
   '/',
-  '/login',
-  '/signup',
+  '/sign-in',
+  '/sign-up',
   '/about',
   '/features',
   '/pricing',
@@ -105,7 +105,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           
           // If on a protected route and not authenticated, redirect to login
           if (isProtectedRoute()) {
-            router.push('/login');
+            router.push('/sign-in');
           }
           
           setUser(null);
@@ -118,7 +118,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         console.log('Auth check successful, user data received');
         
         // If user is authenticated but trying to access login/signup pages, redirect to home
-        if ((pathname === '/login' || pathname === '/signup') && data.user) {
+        if ((pathname === '/sign-in' || pathname === '/sign-up') && data.user) {
           console.log('User already authenticated, redirecting to home');
           router.push('/');
           setUser(data.user);
@@ -166,7 +166,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setError(null);
 
     try {
-      const res = await fetch('/api/auth/login', {
+      const res = await fetch('/api/auth/sign-in', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -340,7 +340,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       });
       
       setUser(null);
-      router.push('/login');
+      router.push('/sign-in');
     } catch (err) {
       console.error('Logout error:', err);
       setError(err instanceof Error ? err.message : 'Failed to logout');

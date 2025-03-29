@@ -147,7 +147,7 @@ function CreateResumeContent() {
         });
         // Redirect to login page after a short delay
         setTimeout(() => {
-          router.push('/login?returnUrl=' + encodeURIComponent(window.location.pathname + window.location.search));
+          router.push('/sign-in?returnUrl=' + encodeURIComponent(window.location.pathname + window.location.search));
         }, 2000);
         return;
       }

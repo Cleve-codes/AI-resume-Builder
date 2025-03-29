@@ -192,22 +192,22 @@ export default function DashboardPage() {
       {/* Content Tabs */}
       <Tabs defaultValue="resumes" className="mb-5 sm:mb-6">
         <div className="max-w-full">
-          <TabsList className="w-full flex mb-4 sm:mb-6 px-0 justify-between h-auto rounded-md">
-            <TabsTrigger value="resumes" className="flex-1 py-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 hover:text-blue-600 flex items-center justify-center flex-col gap-1 px-0 h-auto rounded-none">
+          <TabsList className="w-full flex mb-4 sm:mb-6 justify-between h-auto rounded-md">
+            <TabsTrigger value="resumes" className="flex-1 py-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 hover:text-blue-600 flex items-center justify-center flex-col gap-1 h-auto rounded-none">
               <FileText className="h-4 w-4" />
-              <span className="text-xs sm:text-sm hidden sm:inline-flex">Resumes</span>
+              <span className="hidden xs:block text-xs sm:text-sm">Resumes</span>
             </TabsTrigger>
-            <TabsTrigger value="templates" className="flex-1 py-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 hover:text-blue-600 flex items-center justify-center flex-col gap-1 px-0 h-auto rounded-none">
+            <TabsTrigger value="templates" className="flex-1 py-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 hover:text-blue-600 flex items-center justify-center flex-col gap-1 h-auto rounded-none">
               <LayoutGrid className="h-4 w-4" />
-              <span className="text-xs sm:text-sm hidden sm:inline-flex">Templates</span>
+              <span className="hidden xs:block text-xs sm:text-sm">Templates</span>
             </TabsTrigger>
-            <TabsTrigger value="analytics" className="flex-1 py-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 hover:text-blue-600 flex items-center justify-center flex-col gap-1 px-0 h-auto rounded-none">
+            <TabsTrigger value="analytics" className="flex-1 py-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 hover:text-blue-600 flex items-center justify-center flex-col gap-1 h-auto rounded-none">
               <BarChart className="h-4 w-4" />
-              <span className="text-xs sm:text-sm hidden sm:inline-flex">Analytics</span>
+              <span className="hidden xs:block text-xs sm:text-sm">Analytics</span>
             </TabsTrigger>
-            <TabsTrigger value="jobs" className="flex-1 py-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 hover:text-blue-600 flex items-center justify-center flex-col gap-1 px-0 h-auto rounded-none">
+            <TabsTrigger value="jobs" className="flex-1 py-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 hover:text-blue-600 flex items-center justify-center flex-col gap-1 h-auto rounded-none">
               <Briefcase className="h-4 w-4" />
-              <span className="text-xs sm:text-sm hidden sm:inline-flex">Jobs</span>
+              <span className="hidden xs:block text-xs sm:text-sm">Jobs</span>
             </TabsTrigger>
           </TabsList>
         </div>

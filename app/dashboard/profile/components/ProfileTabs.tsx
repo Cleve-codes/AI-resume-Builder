@@ -55,22 +55,34 @@ export function ProfileTabs({
   return (
     <motion.div initial="hidden" animate="visible" variants={fadeInUp} className="w-full">
       <Tabs value={activeTab} onValueChange={onTabChange} className="w-full">
-        <TabsList className="mb-6 grid grid-cols-4 md:w-auto bg-muted/60 p-1 rounded-md">
-          <TabsTrigger value="personal" className="data-[state=active]:bg-white data-[state=active]:shadow-sm transition-all">
-            <UserCircle className="mr-2 h-4 w-4 text-primary" />
-            Personal Info
+        <TabsList className="w-full flex mb-6 justify-between h-auto rounded-md">
+          <TabsTrigger 
+            value="personal" 
+            className="flex-1 py-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 hover:text-blue-600 flex items-center justify-center flex-col gap-1 h-auto rounded-none"
+          >
+            <UserCircle className="h-4 w-4" />
+            <span className="hidden xs:block text-xs sm:text-sm">Personal</span>
           </TabsTrigger>
-          <TabsTrigger value="security" className="data-[state=active]:bg-white data-[state=active]:shadow-sm transition-all">
-            <Shield className="mr-2 h-4 w-4 text-primary" />
-            Security
+          <TabsTrigger 
+            value="security"
+            className="flex-1 py-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 hover:text-blue-600 flex items-center justify-center flex-col gap-1 h-auto rounded-none"
+          >
+            <Shield className="h-4 w-4" />
+            <span className="hidden xs:block text-xs sm:text-sm">Security</span>
           </TabsTrigger>
-          <TabsTrigger value="preferences" className="data-[state=active]:bg-white data-[state=active]:shadow-sm transition-all">
-            <Bell className="mr-2 h-4 w-4 text-primary" />
-            Preferences
+          <TabsTrigger 
+            value="preferences"
+            className="flex-1 py-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 hover:text-blue-600 flex items-center justify-center flex-col gap-1 h-auto rounded-none"
+          >
+            <Bell className="h-4 w-4" />
+            <span className="hidden xs:block text-xs sm:text-sm">Preferences</span>
           </TabsTrigger>
-          <TabsTrigger value="billing" className="data-[state=active]:bg-white data-[state=active]:shadow-sm transition-all">
-            <CreditCard className="mr-2 h-4 w-4 text-primary" />
-            Billing
+          <TabsTrigger 
+            value="billing"
+            className="flex-1 py-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 hover:text-blue-600 flex items-center justify-center flex-col gap-1 h-auto rounded-none"
+          >
+            <CreditCard className="h-4 w-4" />
+            <span className="hidden xs:block text-xs sm:text-sm">Billing</span>
           </TabsTrigger>
         </TabsList>
 

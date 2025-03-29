@@ -174,51 +174,51 @@ export default function SettingsPage() {
                 <TabsList className="w-full flex justify-between h-auto rounded-md">
                   <TabsTrigger 
                     value="appearance" 
-                    className="flex-1 py-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 hover:text-blue-600 flex items-center justify-center flex-col gap-1 px-0 h-auto rounded-none"
+                    className="flex-1 py-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 hover:text-blue-600 flex items-center justify-center flex-col gap-1 h-auto rounded-none"
                     onClick={() => setActiveTab('appearance')}
                   >
                     <Palette className="h-4 w-4" />
-                    <span className="hidden sm:block sm:text-sm">Appearance</span>
+                    <span className="hidden xs:block text-xs sm:text-sm">Appearance</span>
                   </TabsTrigger>
                   <TabsTrigger 
                     value="resume" 
-                    className="flex-1 py-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 hover:text-blue-600 flex items-center justify-center flex-col gap-1 px-0 h-auto rounded-none"
+                    className="flex-1 py-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 hover:text-blue-600 flex items-center justify-center flex-col gap-1 h-auto rounded-none"
                     onClick={() => setActiveTab('resume')}
                   >
                     <FileText className="h-4 w-4" />
-                    <span className="hidden sm:block sm:text-sm">Resume</span>
+                    <span className="hidden xs:block text-xs sm:text-sm">Resume</span>
                   </TabsTrigger>
                   <TabsTrigger 
                     value="export" 
-                    className="flex-1 py-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 hover:text-blue-600 flex items-center justify-center flex-col gap-1 px-0 h-auto rounded-none"
+                    className="flex-1 py-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 hover:text-blue-600 flex items-center justify-center flex-col gap-1 h-auto rounded-none"
                     onClick={() => setActiveTab('export')}
                   >
                     <Download className="h-4 w-4" />
-                    <span className="hidden sm:block sm:text-sm">Export</span>
+                    <span className="hidden xs:block text-xs sm:text-sm">Export</span>
                   </TabsTrigger>
                   <TabsTrigger 
                     value="ai" 
-                    className="flex-1 py-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 hover:text-blue-600 flex items-center justify-center flex-col gap-1 px-0 h-auto rounded-none"
+                    className="flex-1 py-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 hover:text-blue-600 flex items-center justify-center flex-col gap-1 h-auto rounded-none"
                     onClick={() => setActiveTab('ai')}
                   >
                     <Zap className="h-4 w-4" />
-                    <span className="hidden sm:block sm:text-sm">AI</span>
+                    <span className="hidden xs:block text-xs sm:text-sm">AI</span>
                   </TabsTrigger>
                   <TabsTrigger 
                     value="language" 
-                    className="flex-1 py-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 hover:text-blue-600 flex items-center justify-center flex-col gap-1 px-0 h-auto rounded-none"
+                    className="flex-1 py-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 hover:text-blue-600 flex items-center justify-center flex-col gap-1 h-auto rounded-none"
                     onClick={() => setActiveTab('language')}
                   >
                     <Globe className="h-4 w-4" />
-                    <span className="hidden sm:block sm:text-sm">Language</span>
+                    <span className="hidden xs:block text-xs sm:text-sm">Language</span>
                   </TabsTrigger>
                   <TabsTrigger 
                     value="account" 
-                    className="flex-1 py-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 hover:text-blue-600 flex items-center justify-center flex-col gap-1 px-0 h-auto rounded-none"
+                    className="flex-1 py-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 hover:text-blue-600 flex items-center justify-center flex-col gap-1 h-auto rounded-none"
                     onClick={() => setActiveTab('account')}
                   >
                     <Settings className="h-4 w-4" />
-                    <span className="hidden sm:block sm:text-sm">Account</span>
+                    <span className="hidden xs:block text-xs sm:text-sm">Account</span>
                   </TabsTrigger>
                 </TabsList>
               </div>

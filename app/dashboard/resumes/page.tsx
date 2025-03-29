@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
-import { Plus, Search } from "lucide-react"
+import { Plus, Search, FileText, Clock, Share2, LayoutTemplate } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import DashboardHeader from "@/components/dashboard-header"
 import DashboardSidebar from "@/components/dashboard-sidebar"
@@ -113,11 +113,35 @@ export default function ResumesPage() {
               />
 
               <Tabs defaultValue="all" className="mb-8">
-                <TabsList>
-                  <TabsTrigger value="all">All Resumes ({resumes.length})</TabsTrigger>
-                  <TabsTrigger value="recent">Recently Updated</TabsTrigger>
-                  <TabsTrigger value="shared">Shared With Me</TabsTrigger>
-                  <TabsTrigger value="templates">My Templates</TabsTrigger>
+                <TabsList className="w-full flex justify-between h-auto rounded-md">
+                  <TabsTrigger 
+                    value="all" 
+                    className="flex-1 py-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 hover:text-blue-600 flex items-center justify-center flex-col gap-1 h-auto rounded-none"
+                  >
+                    <FileText className="h-4 w-4" />
+                    <span className="hidden xs:block text-xs sm:text-sm">All ({resumes.length})</span>
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="recent"
+                    className="flex-1 py-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 hover:text-blue-600 flex items-center justify-center flex-col gap-1 h-auto rounded-none"
+                  >
+                    <Clock className="h-4 w-4" />
+                    <span className="hidden xs:block text-xs sm:text-sm">Recent</span>
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="shared"
+                    className="flex-1 py-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 hover:text-blue-600 flex items-center justify-center flex-col gap-1 h-auto rounded-none"
+                  >
+                    <Share2 className="h-4 w-4" />
+                    <span className="hidden xs:block text-xs sm:text-sm">Shared</span>
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="templates"
+                    className="flex-1 py-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 hover:text-blue-600 flex items-center justify-center flex-col gap-1 h-auto rounded-none"
+                  >
+                    <LayoutTemplate className="h-4 w-4" />
+                    <span className="hidden xs:block text-xs sm:text-sm">Templates</span>
+                  </TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="all" className="mt-6">

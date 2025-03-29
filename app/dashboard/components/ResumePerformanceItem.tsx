@@ -60,7 +60,8 @@ export function ResumePerformanceItem({ resume }: ResumePerformanceItemProps) {
         <div className="flex items-center gap-2">
           <span className={`text-sm font-medium ${getScoreColor(resume.score)}`}>{resume.score}%</span>
           <Badge variant="outline" className="bg-muted">
-            <Eye className="h-3 w-3 mr-1" /> 12 views
+            <Eye className="h-3 w-3 mr-1" /> 12
+            <span className="hidden sm:block" > views</span>
           </Badge>
         </div>
       </div>

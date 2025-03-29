@@ -11,7 +11,7 @@ export function DashboardAnalytics() {
   return (
     <>
       <motion.div variants={itemVariants}>
-        <h2 className="text-xl font-semibold mb-6">Resume Analytics</h2>
+        {/* <h2 className="text-xl font-semibold mb-6">Resume Analytics</h2> */}
       </motion.div>
 
       <motion.div variants={itemVariants}>

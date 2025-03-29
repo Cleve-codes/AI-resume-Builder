@@ -35,16 +35,16 @@ export default function AnalyticsPage() {
       <div className="flex-1">
         {/* <DashboardHeader /> */}
 
-        <main className="p-6">
-          <div className="container py-6 space-y-6 max-w-7xl">
+        <main className="p-4 sm:p-6 overflow-hidden">
+          <div className="py-4 sm:py-6 space-y-4 sm:space-y-6 w-full overflow-hidden">
             <PageHeader
               title="Analytics Dashboard"
               description="Track your resume performance, job applications, and skill gaps"
             />
 
             {isLoading ? (
-              <div className="space-y-6">
-                <div className="flex flex-col md:flex-row justify-between gap-4 mb-6">
+              <div className="space-y-4 sm:space-y-6 w-full overflow-hidden">
+                <div className="flex flex-col md:flex-row justify-between gap-4 mb-4 sm:mb-6">
                   <Skeleton className="h-10 w-[200px]" />
                   <div className="flex gap-3">
                     <Skeleton className="h-10 w-[150px]" />
@@ -52,13 +52,13 @@ export default function AnalyticsPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-4 sm:mb-6">
                   {Array.from({ length: 4 }).map((_, index) => (
                     <Skeleton key={index} className="h-[120px] rounded-lg" />
                   ))}
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
                   <Skeleton className="h-[400px] rounded-lg" />
                   <Skeleton className="h-[400px] rounded-lg" />
                 </div>
@@ -66,7 +66,7 @@ export default function AnalyticsPage() {
                 <Skeleton className="h-[400px] rounded-lg" />
               </div>
             ) : (
-              <>
+              <div className="w-full overflow-hidden">
                 <FilterControls
                   selectedResume={selectedResume}
                   timeRange={timeRange}
@@ -79,11 +79,13 @@ export default function AnalyticsPage() {
                   onTabChange={handleTabChange}
                 />
 
-                {activeTab === "overview" && <OverviewTab />}
-                {activeTab === "resumes" && <ResumesTab />}
-                {activeTab === "applications" && <ApplicationsTab />}
-                {activeTab === "skills" && <SkillsTab />}
-              </>
+                <div className="overflow-x-hidden">
+                  {activeTab === "overview" && <OverviewTab />}
+                  {activeTab === "resumes" && <ResumesTab />}
+                  {activeTab === "applications" && <ApplicationsTab />}
+                  {activeTab === "skills" && <SkillsTab />}
+                </div>
+              </div>
             )}
           </div>
         </main>

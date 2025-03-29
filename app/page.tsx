@@ -13,15 +13,15 @@ import { Toaster } from "@/components/ui/toaster";
 export default function HomePage() {
   return (
     <AnimationProvider>
-      <div className="flex flex-col min-h-screen font-sans bg-gradient-to-b from-white to-blue-50">
+    <div className="flex flex-col min-h-screen font-sans bg-gradient-to-b from-white to-blue-50">
         <Header />
-        <main className="flex-1">
+      <main className="flex-1">
           <HeroSection />
           <FeaturesSection />
           <HowItWorksSection />
           <TestimonialsSection />
           <CTASection />
-        </main>
+      </main>
         <Footer />
         <Toaster />
       </div>

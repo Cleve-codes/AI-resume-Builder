@@ -17,12 +17,12 @@ export function FilterControls({
   onTimeRangeChange,
 }: FilterControlsProps) {
   return (
-    <div className="flex flex-col md:flex-row justify-between gap-4 mb-6">
-      <div className="flex gap-3 items-center">
+    <div className="flex flex-col sm:flex-row justify-between gap-3 mb-4 sm:mb-6 w-full overflow-hidden">
+      <div className="flex flex-col xs:flex-row gap-3 items-start xs:items-center">
         <Select value={selectedResume} onValueChange={onResumeChange}>
-          <SelectTrigger className="w-[200px] h-9">
-            <FileText className="h-4 w-4 mr-2" />
-            <SelectValue placeholder="Select resume" />
+          <SelectTrigger className="w-full xs:w-[180px] sm:w-[200px] h-9">
+            <FileText className="h-4 w-4 mr-2 flex-shrink-0" />
+            <SelectValue placeholder="Select resume" className="text-sm truncate" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Resumes</SelectItem>
@@ -33,9 +33,9 @@ export function FilterControls({
         </Select>
 
         <Select value={timeRange} onValueChange={onTimeRangeChange}>
-          <SelectTrigger className="w-[150px] h-9">
-            <Calendar className="h-4 w-4 mr-2" />
-            <SelectValue placeholder="Time range" />
+          <SelectTrigger className="w-full xs:w-[140px] sm:w-[150px] h-9">
+            <Calendar className="h-4 w-4 mr-2 flex-shrink-0" />
+            <SelectValue placeholder="Time range" className="text-sm truncate" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="1m">Last Month</SelectItem>

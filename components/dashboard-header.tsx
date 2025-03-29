@@ -17,7 +17,12 @@ import Link from "next/link";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { useState } from "react";
 
-export default function DashboardHeader() {
+interface DashboardHeaderProps {
+  isMobileMenuOpen?: boolean;
+  setIsMobileMenuOpen?: (open: boolean) => void;
+}
+
+export default function DashboardHeader({ isMobileMenuOpen, setIsMobileMenuOpen }: DashboardHeaderProps) {
   const { user } = useUser();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   
@@ -32,11 +37,16 @@ export default function DashboardHeader() {
   };
 
   return (
-    <header className="border-b bg-gradient-to-b from-white to-blue-50 h-16 flex items-center px-3 md:px-6">
-      {/* Mobile Menu Icon - This is just a placeholder to balance the header layout */}
-      <div className="md:hidden w-10">
-        {/* We don't need a real button here as the actual menu is in the sidebar */}
-      </div>
+    <header className="border-b bg-gradient-to-b from-white to-blue-50 h-16 flex items-center px-3 md:px-6 sticky top-0 z-20">
+      {/* Mobile Menu Button */}
+      <Button 
+        variant="ghost" 
+        size="icon" 
+        className="md:hidden"
+        onClick={() => setIsMobileMenuOpen?.(!isMobileMenuOpen)}
+      >
+        <Menu className="h-5 w-5 text-gray-600" />
+      </Button>
       
       {/* Search Bar */}
       <div className="relative flex-1 ml-3 hidden md:flex">

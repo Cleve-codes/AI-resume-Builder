@@ -73,7 +73,7 @@ export async function requireAuth() {
   const user = await getServerSideUser();
   
   if (!user) {
-    redirect('/login');
+    redirect('/sign-in?callbackUrl=/dashboard');
   }
   
   return user;

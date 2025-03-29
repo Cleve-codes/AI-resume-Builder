@@ -9,6 +9,7 @@ import { PageHeader } from "./components/PageHeader"
 import { HelpTabs } from "./components/HelpTabs"
 import { ContactForm } from "./components/ContactForm"
 import { PopularResources } from "./components/PopularResources"
+import { usePageNotification } from "@/app/hooks/usePageNotification"
 
 export default function SupportPage() {
   const {
@@ -20,6 +21,14 @@ export default function SupportPage() {
     handleContactFormChange,
     handleContactFormSubmit,
   } = useHelpPage()
+
+  // Show help page notification
+  usePageNotification({
+    title: "Help & Support",
+    description: "Find answers or reach out to our support team for assistance",
+    duration: 4000,
+    type: "info"
+  });
 
   return (
     <div className="flex min-h-screen bg-muted/30">

@@ -19,6 +19,7 @@ import { ResumeList } from "./components/ResumeList"
 // Import types and utils
 import { Resume } from "./types"
 import { filterAndSortResumes } from "./utils/resumeFilters"
+import { usePageNotification } from "@/app/hooks/usePageNotification"
 
 export default function ResumesPage() {
   const [isLoading, setIsLoading] = useState(true)
@@ -27,6 +28,14 @@ export default function ResumesPage() {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
   const [sortBy, setSortBy] = useState("last_updated")
   const [filterStatus, setFilterStatus] = useState("all")
+
+  // Show resumes page notification
+  usePageNotification({
+    title: "My Resumes",
+    description: "Create, manage, and organize your resumes in one place",
+    duration: 4000,
+    type: "default"
+  });
 
   // Simulate loading resumes from API
   useEffect(() => {

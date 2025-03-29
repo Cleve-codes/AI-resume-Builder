@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion"
 import { useEffect } from "react"
-import { toast } from "sonner"
 import DashboardHeader from "@/components/dashboard-header"
 import DashboardSidebar from "@/components/dashboard-sidebar"
 import { FileUploader } from "./components/FileUploader"
@@ -12,6 +11,7 @@ import { AIAnalysisPanel } from "./components/AIAnalysisPanel"
 import { PageHeader } from "./components/PageHeader"
 import { TabNavigation } from "./components/TabNavigation"
 import { useResumeUpload } from "./hooks/useResumeUpload"
+import { usePageNotification } from "@/app/hooks/usePageNotification"
 
 // Animation variants
 const containerVariants = {
@@ -36,13 +36,13 @@ export default function UploadResumePage() {
     handleEnhanceWithAI,
   } = useResumeUpload()
   
-  useEffect(() => {
-    // Show toast notification on initial render
-    toast("In development", {
-      description: "This feature is currently under development",
-      duration: 3000, // Will disappear after 3 seconds
-    })
-  }, [])
+  // Show upload page notification using our custom hook
+  usePageNotification({
+    title: "Resume Upload",
+    description: "Upload your existing resume or create one from scratch",
+    duration: 3000,
+    type: "info"
+  });
 
   // Prepare upload content
   const uploadContent = (

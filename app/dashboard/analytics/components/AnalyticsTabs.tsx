@@ -14,51 +14,53 @@ interface AnalyticsTabsProps {
 
 export function AnalyticsTabs({ activeTab, onTabChange }: AnalyticsTabsProps) {
   return (
-    <Tabs value={activeTab} onValueChange={onTabChange} className="w-full">
-      <TabsList className="w-full flex mb-6 justify-between h-auto rounded-md">
-        <TabsTrigger 
-          value="overview" 
-          className="flex-1 py-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 hover:text-blue-600 flex items-center justify-center flex-col gap-1 h-auto rounded-none"
-        >
-          <BarChart2 className="h-4 w-4" />
-          <span className="hidden xs:block text-xs sm:text-sm">Overview</span>
-        </TabsTrigger>
-        <TabsTrigger 
-          value="resumes"
-          className="flex-1 py-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 hover:text-blue-600 flex items-center justify-center flex-col gap-1 h-auto rounded-none"
-        >
-          <FileText className="h-4 w-4" />
-          <span className="hidden xs:block text-xs sm:text-sm">Resumes</span>
-        </TabsTrigger>
-        <TabsTrigger 
-          value="applications"
-          className="flex-1 py-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 hover:text-blue-600 flex items-center justify-center flex-col gap-1 h-auto rounded-none"
-        >
-          <BriefcaseBusiness className="h-4 w-4" />
-          <span className="hidden xs:block text-xs sm:text-sm">Applications</span>
-        </TabsTrigger>
-        <TabsTrigger 
-          value="skills"
-          className="flex-1 py-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 hover:text-blue-600 flex items-center justify-center flex-col gap-1 h-auto rounded-none"
-        >
-          <Lightbulb className="h-4 w-4" />
-          <span className="hidden xs:block text-xs sm:text-sm">Skills</span>
-        </TabsTrigger>
-      </TabsList>
+    <Tabs value={activeTab} onValueChange={onTabChange} className="w-full overflow-hidden">
+      <div className="w-full overflow-x-auto no-scrollbar">
+        <TabsList className="w-full flex mb-4 sm:mb-6 justify-between h-auto rounded-md overflow-visible min-w-[300px]">
+          <TabsTrigger 
+            value="overview" 
+            className="flex-1 py-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 hover:text-blue-600 flex items-center justify-center flex-col gap-1 h-auto rounded-none"
+          >
+            <BarChart2 className="h-4 w-4" />
+            <span className="hidden xs:block text-xs sm:text-sm">Overview</span>
+          </TabsTrigger>
+          <TabsTrigger 
+            value="resumes"
+            className="flex-1 py-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 hover:text-blue-600 flex items-center justify-center flex-col gap-1 h-auto rounded-none"
+          >
+            <FileText className="h-4 w-4" />
+            <span className="hidden xs:block text-xs sm:text-sm">Resumes</span>
+          </TabsTrigger>
+          <TabsTrigger 
+            value="applications"
+            className="flex-1 py-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 hover:text-blue-600 flex items-center justify-center flex-col gap-1 h-auto rounded-none"
+          >
+            <BriefcaseBusiness className="h-4 w-4" />
+            <span className="hidden xs:block text-xs sm:text-sm">Applications</span>
+          </TabsTrigger>
+          <TabsTrigger 
+            value="skills"
+            className="flex-1 py-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 hover:text-blue-600 flex items-center justify-center flex-col gap-1 h-auto rounded-none"
+          >
+            <Lightbulb className="h-4 w-4" />
+            <span className="hidden xs:block text-xs sm:text-sm">Skills</span>
+          </TabsTrigger>
+        </TabsList>
+      </div>
 
-      <TabsContent value="overview" className="mt-0">
+      <TabsContent value="overview" className="mt-0 overflow-hidden">
         <OverviewTab />
       </TabsContent>
 
-      <TabsContent value="resumes" className="mt-0">
+      <TabsContent value="resumes" className="mt-0 overflow-hidden">
         <ResumesTab />
       </TabsContent>
 
-      <TabsContent value="applications" className="mt-0">
+      <TabsContent value="applications" className="mt-0 overflow-hidden">
         <ApplicationsTab />
       </TabsContent>
 
-      <TabsContent value="skills" className="mt-0">
+      <TabsContent value="skills" className="mt-0 overflow-hidden">
         <SkillsTab />
       </TabsContent>
     </Tabs>

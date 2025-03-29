@@ -15,6 +15,7 @@ import { PageHeader } from "./components/PageHeader"
 import { ProfileTabs } from "./components/ProfileTabs"
 import { ProfileSidebar } from "./components/ProfileSidebar"
 import { SuccessAlert } from "./components/SuccessAlert"
+import Link from "next/link"
 
 // Animation variants
 const containerVariants = {
@@ -78,7 +79,7 @@ export default function ProfilePage() {
     if (!isLoaded) return
 
     if (!user) {
-      router.push('/login')
+      router.push('/sign-in')
       return
     }
 
@@ -190,12 +191,12 @@ export default function ProfilePage() {
       <div className="flex-1">
         {/* <DashboardHeader /> */}
 
-        <main className="p-6">
+        <main>
           <motion.div
             initial="hidden"
             animate="show"
             variants={containerVariants}
-            className="container mx-auto px-4 py-8"
+            className="container sm:mx-auto sm:px-4 sm:py-8"
           >
             <motion.div variants={itemVariants} className="mb-8">
               <div className="flex items-center gap-2 mb-2">
@@ -203,7 +204,9 @@ export default function ProfilePage() {
                 <h1 className="text-3xl font-bold">My Profile</h1>
               </div>
               <div className="flex items-center gap-1 text-muted-foreground">
-                <span>Dashboard</span>
+                <Link href="/dashboard" className="flex items-center gap-1">
+                  <span>Dashboard</span>
+                </Link>
                 <ChevronRight className="h-4 w-4" />
                 <span className="text-foreground font-medium">My Profile</span>
               </div>

@@ -141,9 +141,9 @@ export default function DashboardPage() {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="px-0"
+      className="px-0 max-w-full overflow-hidden"
     >
-      <div className="mb-5 sm:mb-6">
+      <div className="mb-5 sm:mb-6 px-4 sm:px-0">
         <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-1 sm:mb-2">Welcome back, {user?.firstName || "User"}</h1>
         <p className="text-muted-foreground text-sm sm:text-base">Here's what's happening with your resumes and job applications.</p>
       </div>
@@ -153,7 +153,7 @@ export default function DashboardPage() {
         variants={containerVariants}
         initial="hidden"
         animate="show"
-        className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2 xs:gap-3 sm:gap-4 mb-5 sm:mb-6"
+        className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2 xs:gap-3 sm:gap-4 mb-5 sm:mb-6 px-4 sm:px-0"
       >
         <motion.div variants={itemVariants}>
           <StatsCard 
@@ -190,79 +190,81 @@ export default function DashboardPage() {
       </motion.div>
       
       {/* Content Tabs */}
-      <Tabs defaultValue="resumes" className="mb-5 sm:mb-6">
-        <div className="max-w-full">
-          <TabsList className="w-full flex mb-4 sm:mb-6 justify-between h-auto rounded-md">
-            <TabsTrigger value="resumes" className="flex-1 py-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 hover:text-blue-600 flex items-center justify-center flex-col gap-1 h-auto rounded-none">
-              <FileText className="h-4 w-4" />
-              <span className="hidden xs:block text-xs sm:text-sm">Resumes</span>
-            </TabsTrigger>
-            <TabsTrigger value="templates" className="flex-1 py-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 hover:text-blue-600 flex items-center justify-center flex-col gap-1 h-auto rounded-none">
-              <LayoutGrid className="h-4 w-4" />
-              <span className="hidden xs:block text-xs sm:text-sm">Templates</span>
-            </TabsTrigger>
-            <TabsTrigger value="analytics" className="flex-1 py-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 hover:text-blue-600 flex items-center justify-center flex-col gap-1 h-auto rounded-none">
-              <BarChart className="h-4 w-4" />
-              <span className="hidden xs:block text-xs sm:text-sm">Analytics</span>
-            </TabsTrigger>
-            <TabsTrigger value="jobs" className="flex-1 py-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 hover:text-blue-600 flex items-center justify-center flex-col gap-1 h-auto rounded-none">
-              <Briefcase className="h-4 w-4" />
-              <span className="hidden xs:block text-xs sm:text-sm">Jobs</span>
-            </TabsTrigger>
-          </TabsList>
-        </div>
-        
-        <TabsContent value="resumes" className="space-y-4 sm:space-y-6">
-          <div className="flex justify-between items-center flex-wrap gap-2 sm:gap-3">
-            <h2 className="text-lg sm:text-xl font-semibold">My Resumes</h2>
-            <Button asChild size="sm" className="whitespace-nowrap text-xs sm:text-sm py-1 h-8">
-              <Link href="/dashboard/resume/create">
-                <span className="hidden xs:inline">Create</span> New Resume
-              </Link>
-            </Button>
+      <div className="px-4 sm:px-0">
+        <Tabs defaultValue="resumes" className="mb-5 sm:mb-6">
+          <div className="max-w-full overflow-x-auto">
+            <TabsList className="w-full flex mb-4 sm:mb-6 justify-between h-auto rounded-md">
+              <TabsTrigger value="resumes" className="flex-1 py-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 hover:text-blue-600 flex items-center justify-center flex-col gap-1 h-auto rounded-none">
+                <FileText className="h-4 w-4" />
+                <span className="hidden xs:block text-xs sm:text-sm">Resumes</span>
+              </TabsTrigger>
+              <TabsTrigger value="templates" className="flex-1 py-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 hover:text-blue-600 flex items-center justify-center flex-col gap-1 h-auto rounded-none">
+                <LayoutGrid className="h-4 w-4" />
+                <span className="hidden xs:block text-xs sm:text-sm">Templates</span>
+              </TabsTrigger>
+              <TabsTrigger value="analytics" className="flex-1 py-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 hover:text-blue-600 flex items-center justify-center flex-col gap-1 h-auto rounded-none">
+                <BarChart className="h-4 w-4" />
+                <span className="hidden xs:block text-xs sm:text-sm">Analytics</span>
+              </TabsTrigger>
+              <TabsTrigger value="jobs" className="flex-1 py-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-600 hover:text-blue-600 flex items-center justify-center flex-col gap-1 h-auto rounded-none">
+                <Briefcase className="h-4 w-4" />
+                <span className="hidden xs:block text-xs sm:text-sm">Jobs</span>
+              </TabsTrigger>
+            </TabsList>
           </div>
-          <DashboardResumes resumes={resumes} />
-        </TabsContent>
-        
-        <TabsContent value="templates" className="space-y-4 sm:space-y-6">
-          <div className="flex justify-between items-center flex-wrap gap-2 sm:gap-3">
-            <h2 className="text-lg sm:text-xl font-semibold">Resume Templates</h2>
-            <Button variant="outline" asChild size="sm" className="whitespace-nowrap text-xs sm:text-sm py-1 h-8">
-              <Link href="/dashboard/resume/templates">
-                <span className="hidden xs:inline">View All</span> Templates
-              </Link>
-            </Button>
-          </div>
-          <DashboardTemplates />
-        </TabsContent>
-        
-        <TabsContent value="analytics" className="space-y-4 sm:space-y-6">
-          <div className="flex justify-between items-center flex-wrap gap-2 sm:gap-3">
-            <h2 className="text-lg sm:text-xl font-semibold">Resume Analytics</h2>
-            <Button variant="outline" asChild size="sm" className="whitespace-nowrap text-xs sm:text-sm py-1 h-8">
-              <Link href="/dashboard/analytics">
-                <span className="hidden xs:inline">Full</span> Analytics
-              </Link>
-            </Button>
-          </div>
-          <DashboardAnalytics />
-        </TabsContent>
-        
-        <TabsContent value="jobs" className="space-y-4 sm:space-y-6">
-          <div className="flex justify-between items-center flex-wrap gap-2 sm:gap-3">
-            <h2 className="text-lg sm:text-xl font-semibold">Recommended Jobs</h2>
-            <Button variant="outline" asChild size="sm" className="whitespace-nowrap text-xs sm:text-sm py-1 h-8">
-              <Link href="/dashboard/jobs">
-                <span className="hidden xs:inline">View All</span> Jobs
-              </Link>
-            </Button>
-          </div>
-          <DashboardJobs />
-        </TabsContent>
-      </Tabs>
+          
+          <TabsContent value="resumes" className="space-y-4 sm:space-y-6">
+            <div className="flex justify-between items-center flex-wrap gap-2 sm:gap-3">
+              <h2 className="text-lg sm:text-xl font-semibold">My Resumes</h2>
+              <Button asChild size="sm" className="whitespace-nowrap text-xs sm:text-sm py-1 h-8">
+                <Link href="/dashboard/resume/create">
+                  <span className="hidden xs:inline">Create</span> New Resume
+                </Link>
+              </Button>
+            </div>
+            <DashboardResumes resumes={resumes} />
+          </TabsContent>
+          
+          <TabsContent value="templates" className="space-y-4 sm:space-y-6">
+            <div className="flex justify-between items-center flex-wrap gap-2 sm:gap-3">
+              <h2 className="text-lg sm:text-xl font-semibold">Resume Templates</h2>
+              <Button variant="outline" asChild size="sm" className="whitespace-nowrap text-xs sm:text-sm py-1 h-8">
+                <Link href="/dashboard/resume/templates">
+                  <span className="hidden xs:inline">View All</span> Templates
+                </Link>
+              </Button>
+            </div>
+            <DashboardTemplates />
+          </TabsContent>
+          
+          <TabsContent value="analytics" className="space-y-4 sm:space-y-6">
+            <div className="flex justify-between items-center flex-wrap gap-2 sm:gap-3">
+              <h2 className="text-xl font-semibold mb-6">Resume Analytics</h2>
+              <Button variant="outline" asChild size="sm" className="whitespace-nowrap text-xs sm:text-sm py-1 h-8">
+                <Link href="/dashboard/analytics">
+                  <span className="hidden xs:inline">Full</span> Analytics
+                </Link>
+              </Button>
+            </div>
+            <DashboardAnalytics />
+          </TabsContent>
+          
+          <TabsContent value="jobs" className="space-y-4 sm:space-y-6">
+            <div className="flex justify-between items-center flex-wrap gap-2 sm:gap-3">
+              <h2 className="text-lg sm:text-xl font-semibold">Recommended Jobs</h2>
+              <Button variant="outline" asChild size="sm" className="whitespace-nowrap text-xs sm:text-sm py-1 h-8">
+                <Link href="/dashboard/jobs">
+                  <span className="hidden xs:inline">View All</span> Jobs
+                </Link>
+              </Button>
+            </div>
+            <DashboardJobs />
+          </TabsContent>
+        </Tabs>
+      </div>
       
       {/* Additional Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 px-4 sm:px-0">
         <div className="lg:col-span-2">
           <ResumePerformance resumes={resumes} />
         </div>

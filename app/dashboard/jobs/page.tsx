@@ -326,32 +326,32 @@ export default function JobMatchesPage() {
 
   return (
     <>
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-        className="mb-8"
-      >
-        <div className="flex items-center gap-2 mb-2">
-          <Briefcase className="h-6 w-6 text-primary" />
-          <h1 className="text-3xl font-bold">Job Matches</h1>
-        </div>
-        <p className="text-muted-foreground">Discover job opportunities that match your skills and experience</p>
-      </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            className="mb-8"
+          >
+            <div className="flex items-center gap-2 mb-2">
+              <Briefcase className="h-6 w-6 text-primary" />
+              <h1 className="text-3xl font-bold">Job Matches</h1>
+            </div>
+            <p className="text-muted-foreground">Discover job opportunities that match your skills and experience</p>
+          </motion.div>
 
-      {isLoading ? (
-        <JobsLoadingState />
-      ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-1">
+          {isLoading ? (
+            <JobsLoadingState />
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-1">
             <ResumeSelection />
             <JobFilters 
               filters={filters} 
               updateFilter={updateFilter} 
               updateJobTypeFilter={updateJobTypeFilter}
               resetFilters={resetFilters}
-            />
-          </div>
+                        />
+                      </div>
 
           <div className="lg:col-span-2">
             <JobSearch 
@@ -369,26 +369,26 @@ export default function JobMatchesPage() {
             />
 
             <div className="grid grid-cols-1 gap-4">
-              {filteredJobs.length === 0 ? (
+                  {filteredJobs.length === 0 ? (
                 <NoJobsFound resetFilters={resetFilters} />
-              ) : (
-                <motion.div variants={containerVariants} initial="hidden" animate="show" className="space-y-4">
-                  {filteredJobs.map((job) => (
-                    <motion.div key={job.id} variants={itemVariants}>
-                      <JobCard
-                        job={job}
+                  ) : (
+                    <motion.div variants={containerVariants} initial="hidden" animate="show" className="space-y-4">
+                      {filteredJobs.map((job) => (
+                        <motion.div key={job.id} variants={itemVariants}>
+                          <JobCard
+                            job={job}
                         onSelect={() => handleJobSelect(job.id)}
-                        onSave={() => toggleSaveJob(job.id)}
-                        onApply={() => applyToJob(job.id)}
-                      />
+                            onSave={() => toggleSaveJob(job.id)}
+                            onApply={() => applyToJob(job.id)}
+                          />
+                        </motion.div>
+                      ))}
                     </motion.div>
-                  ))}
-                </motion.div>
-              )}
+                  )}
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          )}
     </>
   )
 }

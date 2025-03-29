@@ -39,11 +39,13 @@ export function DashboardResumes({ resumes }: DashboardResumesProps) {
           <div className="flex gap-3">
             <Link href="/dashboard/resume/create">
               <Button variant="outline" className="gap-2">
-                <Plus className="h-4 w-4" /> Create New
+                <Plus className="h-4 w-4" />
+                <span className="hidden sm:block" > Create New</span>
               </Button>
             </Link>
             <Button className="gap-2">
-              <Upload className="h-4 w-4" /> Upload Resume
+              <Upload className="h-4 w-4" /> 
+              <span className="hidden sm:block" > Upload Resume</span>
             </Button>
           </div>
         </div>

@@ -57,7 +57,7 @@ function CreateResumeContent() {
   const handleTemplateId = (id: string | null) => {
     setTemplateId(id);
   };
-
+  
   useEffect(() => {
     // Fetch template details if we have an ID
     const fetchTemplateDetails = async () => {
@@ -99,10 +99,10 @@ function CreateResumeContent() {
     setActiveTab(value);
   };
   
-  const createNewResume = async () => {
-    try {
-      setIsLoading(true);
-      
+    const createNewResume = async () => {
+      try {
+        setIsLoading(true);
+        
       console.log(`Creating resume with template ID: ${templateId}`);
       // POST to /api/resumes with the template ID and user data
       const response = await fetch('/api/resumes', {
@@ -262,20 +262,20 @@ function CreateResumeContent() {
         
         <main className="p-6">
           {isLoading ? (
-            <div className="flex flex-col items-center justify-center min-h-[70vh]">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="text-center"
-              >
-                <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
+          <div className="flex flex-col items-center justify-center min-h-[70vh]">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="text-center"
+            >
+              <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
                 <h1 className="text-2xl font-bold mb-2">Loading Template</h1>
-                <p className="text-muted-foreground max-w-md">
+              <p className="text-muted-foreground max-w-md">
                   Loading your selected template...
-                </p>
-              </motion.div>
-            </div>
+              </p>
+            </motion.div>
+          </div>
           ) : template ? (
             <motion.div
               initial={{ opacity: 0, y: 20 }}

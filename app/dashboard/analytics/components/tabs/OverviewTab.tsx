@@ -1,6 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
+import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { StatsCard } from "../StatsCard"
 import { Eye, Briefcase, Users, Target, TrendingUp, PieChartIcon, Activity } from "lucide-react"
@@ -74,9 +75,28 @@ const jobMatchTrendsData = [
 ]
 
 export function OverviewTab() {
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
+  
+  useEffect(() => {
+    // Set initial value
+    setIsSmallScreen(window.innerWidth < 640);
+    
+    // Handle resize
+    const handleResize = () => {
+      setIsSmallScreen(window.innerWidth < 640);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    
+    // Cleanup
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
   return (
-    <motion.div variants={containerVariants} initial="hidden" animate="show">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+    <motion.div variants={containerVariants} initial="hidden" animate="show" className="w-full overflow-hidden">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-4 sm:mb-6">
         <motion.div variants={itemVariants}>
           <StatsCard
             title="Resume Views"
@@ -118,19 +138,19 @@ export function OverviewTab() {
         </motion.div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        <motion.div variants={itemVariants}>
-          <Card className="overflow-hidden transition-all duration-300 hover:shadow-md">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-6 mb-4 sm:mb-6">
+        <motion.div variants={itemVariants} className="w-full overflow-hidden">
+          <Card className="overflow-hidden transition-all duration-300 hover:shadow-md w-full">
             <CardHeader className="bg-gradient-to-r from-primary/5 to-transparent border-b">
-              <CardTitle className="flex items-center gap-2">
-                <TrendingUp className="h-5 w-5 text-primary" /> Resume Views Trend
+              <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 text-primary" /> Resume Views Trend
               </CardTitle>
-              <CardDescription>Number of times your resumes have been viewed over time</CardDescription>
+              <CardDescription className="text-xs sm:text-sm">Number of times your resumes have been viewed over time</CardDescription>
             </CardHeader>
-            <CardContent className="pt-6">
-              <div className="h-80">
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={resumeViewsData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+            <CardContent className="pt-4 sm:pt-6 overflow-hidden">
+              <div className="h-60 sm:h-80 w-full overflow-hidden">
+                <ResponsiveContainer width="99%" height="100%">
+                  <AreaChart data={resumeViewsData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
                     <defs>
                       <linearGradient id="colorViews" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="5%" stopColor="#6366f1" stopOpacity={0.8} />
@@ -138,12 +158,13 @@ export function OverviewTab() {
                       </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                    <XAxis dataKey="name" />
-                    <YAxis />
+                    <XAxis dataKey="name" tick={{ fontSize: 12 }} />
+                    <YAxis tick={{ fontSize: 12 }} width={30} />
                     <Tooltip
                       contentStyle={{
                         backgroundColor: "hsl(var(--background))",
                         borderColor: "hsl(var(--border))",
+                        fontSize: 12,
                       }}
                       itemStyle={{ color: "hsl(var(--foreground))" }}
                       labelStyle={{ color: "hsl(var(--foreground))" }}
@@ -156,24 +177,24 @@ export function OverviewTab() {
           </Card>
         </motion.div>
 
-        <motion.div variants={itemVariants}>
-          <Card className="overflow-hidden transition-all duration-300 hover:shadow-md">
+        <motion.div variants={itemVariants} className="w-full overflow-hidden">
+          <Card className="overflow-hidden transition-all duration-300 hover:shadow-md w-full">
             <CardHeader className="bg-gradient-to-r from-primary/5 to-transparent border-b">
-              <CardTitle className="flex items-center gap-2">
-                <PieChartIcon className="h-5 w-5 text-primary" /> Application Status
+              <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                <PieChartIcon className="h-4 w-4 sm:h-5 sm:w-5 text-primary" /> Application Status
               </CardTitle>
-              <CardDescription>Breakdown of your job application statuses</CardDescription>
+              <CardDescription className="text-xs sm:text-sm">Breakdown of your job application statuses</CardDescription>
             </CardHeader>
-            <CardContent className="pt-6">
-              <div className="h-80 flex items-center justify-center">
-                <ResponsiveContainer width="100%" height="100%">
+            <CardContent className="pt-4 sm:pt-6 overflow-hidden">
+              <div className="h-60 sm:h-80 w-full overflow-hidden flex items-center justify-center">
+                <ResponsiveContainer width="99%" height="100%">
                   <PieChart>
                     <Pie
                       data={applicationStatusData}
                       cx="50%"
                       cy="50%"
                       labelLine={false}
-                      outerRadius={120}
+                      outerRadius={isSmallScreen ? 80 : 120}
                       fill="#8884d8"
                       dataKey="value"
                       label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
@@ -189,6 +210,7 @@ export function OverviewTab() {
                       contentStyle={{
                         backgroundColor: "hsl(var(--background))",
                         borderColor: "hsl(var(--border))",
+                        fontSize: 12,
                       }}
                       itemStyle={{ color: "hsl(var(--foreground))" }}
                       labelStyle={{ color: "hsl(var(--foreground))" }}
@@ -202,33 +224,34 @@ export function OverviewTab() {
         </motion.div>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 mb-6">
-        <motion.div variants={itemVariants}>
-          <Card className="overflow-hidden transition-all duration-300 hover:shadow-md">
+      <div className="grid grid-cols-1 gap-3 sm:gap-6 mb-4 sm:mb-6">
+        <motion.div variants={itemVariants} className="w-full overflow-hidden">
+          <Card className="overflow-hidden transition-all duration-300 hover:shadow-md w-full">
             <CardHeader className="bg-gradient-to-r from-primary/5 to-transparent border-b">
-              <CardTitle className="flex items-center gap-2">
-                <Activity className="h-5 w-5 text-primary" /> Job Match Trends
+              <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                <Activity className="h-4 w-4 sm:h-5 sm:w-5 text-primary" /> Job Match Trends
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-xs sm:text-sm">
                 Tracking your job matches, applications, and interviews over time
               </CardDescription>
             </CardHeader>
-            <CardContent className="pt-6">
-              <div className="h-80">
-                <ResponsiveContainer width="100%" height="100%">
-                  <ComposedChart data={jobMatchTrendsData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+            <CardContent className="pt-4 sm:pt-6 overflow-hidden">
+              <div className="h-60 sm:h-80 w-full overflow-hidden">
+                <ResponsiveContainer width="99%" height="100%">
+                  <ComposedChart data={jobMatchTrendsData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                    <XAxis dataKey="name" />
-                    <YAxis />
+                    <XAxis dataKey="name" tick={{ fontSize: 12 }} />
+                    <YAxis tick={{ fontSize: 12 }} width={30} />
                     <Tooltip
                       contentStyle={{
                         backgroundColor: "hsl(var(--background))",
                         borderColor: "hsl(var(--border))",
+                        fontSize: 12,
                       }}
                       itemStyle={{ color: "hsl(var(--foreground))" }}
                       labelStyle={{ color: "hsl(var(--foreground))" }}
                     />
-                    <Legend />
+                    <Legend iconSize={10} wrapperStyle={{ fontSize: 12 }} />
                     <Bar dataKey="matches" fill="#6366f1" name="Job Matches" />
                     <Bar dataKey="applications" fill="#3b82f6" name="Applications" />
                     <Line type="monotone" dataKey="interviews" stroke="#22c55e" name="Interviews" />

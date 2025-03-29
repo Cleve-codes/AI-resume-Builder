@@ -38,12 +38,16 @@ export function ResumeSelection() {
           </p>
         </div>
 
-        <div className="mt-4 flex justify-between">
+        <div className="mt-4 flex justify-around sm:justify-between">
           <Button variant="outline" size="sm" className="gap-1">
-            <Zap className="h-3 w-3" /> Optimize Resume
+            <Zap className="h-3 w-3" /> 
+            <span className="hidden sm:block"> Optimize Resume</span>
+            <span className="block sm:hidden"> Optimize</span>
           </Button>
           <Button variant="outline" size="sm" className="gap-1">
-            <BarChart className="h-3 w-3" /> View Analytics
+            <BarChart className="h-3 w-3" />
+            <span className="hidden sm:block"> View Analytics</span>
+            <span className="block sm:hidden"> Analytics</span>
           </Button>
         </div>
       </CardContent>

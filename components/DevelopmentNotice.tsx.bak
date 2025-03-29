@@ -2,7 +2,8 @@
 
 import { useEffect, useRef } from 'react';
 import { useToast } from '@/components/ui/use-toast';
-import { Github } from 'lucide-react';
+import { InfoIcon, Github } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 
@@ -13,15 +14,15 @@ interface DevelopmentNoticeProps {
 export default function DevelopmentNotice({ forceShow = false }: DevelopmentNoticeProps) {
   const { toast } = useToast();
   const pathname = usePathname();
-  // Use a ref to track if the toast has been shown for the current path
-  const toastShownRef = useRef<string | null>(null);
+  // Use a ref to track if the toast has been shown
+  const toastShownRef = useRef(false);
   
   useEffect(() => {
-    // Only show the toast if it hasn't been shown for this path
-    if (toastShownRef.current === pathname) return;
+    // Only show the toast if it hasn't been shown already
+    if (toastShownRef.current) return;
     
-    // Mark the toast as shown for this path
-    toastShownRef.current = pathname;
+    // Mark the toast as shown to prevent duplicates
+    toastShownRef.current = true;
     
     // Determine position based on path
     const isHomePage = pathname === '/';
@@ -36,7 +37,7 @@ export default function DevelopmentNotice({ forceShow = false }: DevelopmentNoti
               This application is still under active development. Some features may not be fully functional or might change over time.
             </p>
             <Link 
-              href="https://github.com/Cleve-codes/AI-resume-Builder" 
+              href="https://github.com/yourusername/AI-resume-Builder" 
               target="_blank" 
               className="flex items-center mt-1 text-sm text-muted-foreground bg-muted p-2 rounded hover:bg-muted/80 transition-colors"
             >
@@ -45,7 +46,7 @@ export default function DevelopmentNotice({ forceShow = false }: DevelopmentNoti
             </Link>
           </div>
         ),
-        duration: 5000, // 5 seconds for the user to read the message
+        duration: 15000, // 15 seconds for the user to read the message
         className: `border-l-4 border-blue-500 ${isHomePage ? "bottom-toast" : "bottom-toast"} max-w-sm w-auto`,
         variant: "default",
       });
@@ -53,7 +54,7 @@ export default function DevelopmentNotice({ forceShow = false }: DevelopmentNoti
 
     // Clean up the timer if component unmounts
     return () => clearTimeout(timer);
-  }, [pathname]); // Re-run when pathname changes, so it shows on each page change
+  }, []); // Empty dependency array so it only runs once
 
   // This component doesn't render anything visible
   return null;

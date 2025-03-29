@@ -26,6 +26,7 @@ import { AISettings } from './components/AISettings'
 import { LanguageSettings } from './components/LanguageSettings'
 import { AccountSettings } from './components/AccountSettings'
 import { useSettingsForm } from './hooks/useSettingsForm'
+import { usePageNotification } from "@/app/hooks/usePageNotification"
 
 // Animation variants
 const containerVariants = {
@@ -49,6 +50,14 @@ export default function SettingsPage() {
   const [isSaving, setIsSaving] = useState(false)
   const [successMessage, setSuccessMessage] = useState("")
   const [isMounted, setIsMounted] = useState(false)
+
+  // Show settings page notification
+  usePageNotification({
+    title: "Settings Dashboard",
+    description: "Customize your application preferences and account settings",
+    duration: 4000,
+    type: "default"
+  });
 
   // Set mounted state after initial render
   useEffect(() => {

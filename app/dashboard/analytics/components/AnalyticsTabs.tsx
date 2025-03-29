@@ -45,7 +45,7 @@ export function AnalyticsTabs({ activeTab, onTabChange }: AnalyticsTabsProps) {
             <Lightbulb className="h-4 w-4" />
             <span className="hidden xs:block text-xs sm:text-sm">Skills</span>
           </TabsTrigger>
-        </TabsList>
+      </TabsList>
       </div>
 
       <TabsContent value="overview" className="mt-0 overflow-hidden">

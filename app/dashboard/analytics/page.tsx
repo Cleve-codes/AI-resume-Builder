@@ -6,6 +6,7 @@ import { motion } from "framer-motion"
 import { Skeleton } from "@/components/ui/skeleton"
 import DashboardHeader from "@/components/dashboard-header"
 import DashboardSidebar from "@/components/dashboard-sidebar"
+import { usePageNotification } from "@/app/hooks/usePageNotification"
 
 // Import our modular components
 import { useAnalyticsPage } from "./hooks/useAnalyticsPage"
@@ -27,6 +28,14 @@ export default function AnalyticsPage() {
     handleTimeRangeChange,
     handleResumeChange
   } = useAnalyticsPage()
+  
+  // Show analytics dashboard notification
+  usePageNotification({
+    title: "Analytics Dashboard",
+    description: "Visualize your resume performance and job application progress",
+    duration: 4000,
+    type: "default"
+  });
 
   return (
     <div className="flex min-h-screen bg-muted/30">

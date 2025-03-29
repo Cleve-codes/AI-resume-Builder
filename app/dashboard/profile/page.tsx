@@ -8,6 +8,7 @@ import DashboardHeader from "@/components/dashboard-header"
 import DashboardSidebar from "@/components/dashboard-sidebar"
 import { useUser } from "@clerk/nextjs"
 import { toast } from "sonner"
+import { usePageNotification } from "@/app/hooks/usePageNotification"
 
 // Import our modular components
 import { useProfilePage } from "./hooks/useProfilePage"
@@ -73,6 +74,14 @@ export default function ProfilePage() {
     handlePasswordSubmit,
     handleSettingsSubmit
   } = useProfilePage()
+
+  // Show profile page notification
+  usePageNotification({
+    title: "Profile Dashboard",
+    description: "Manage your personal information and account settings",
+    duration: 4000,
+    type: "default"
+  });
 
   // Fetch user profile data when component loads
   useEffect(() => {

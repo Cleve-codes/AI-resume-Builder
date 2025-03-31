@@ -3,6 +3,7 @@
 import { SignIn } from "@clerk/nextjs";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import Image from "next/image";
 
 export default function SignInPage() {
   return (
@@ -17,24 +18,22 @@ export default function SignInPage() {
       
       <div className="flex-1 flex items-center justify-center p-4">
         <div className="w-full max-w-md">
-          <SignIn 
-            appearance={{
-              elements: {
-                formButtonPrimary: 
-                  "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-3 font-medium rounded-lg",
-                card: "border border-blue-100 shadow-lg rounded-xl",
-                headerTitle: "text-2xl font-bold",
-                headerSubtitle: "text-gray-500",
-                socialButtonsIconButton: "border border-gray-300 hover:bg-gray-50",
-                socialButtonsBlockButton: "border border-gray-300 hover:bg-gray-50",
-                formFieldInput: "rounded-lg border-blue-100 focus:border-blue-300 focus:ring-blue-300",
-                footerActionText: "text-gray-600",
-                footerActionLink: "text-blue-600 hover:text-blue-800 hover:underline font-medium",
-              },
-            }}
-            signUpUrl="/sign-up"
-            redirectUrl="/dashboard"
-          />
+          <div className="flex flex-col items-center gap-8">
+            <div className="flex items-center gap-4">
+              <Image src="/logo.png" alt="Logo" width={50} height={50} />
+              <h1 className="text-4xl font-bold">AI Resume Builder</h1>
+            </div>
+            <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-lg">
+              <SignIn
+                appearance={{
+                  elements: {
+                    footer: "hidden"
+                  }
+                }}
+                fallbackRedirectUrl="/dashboard"
+              />
+            </div>
+          </div>
         </div>
       </div>
       

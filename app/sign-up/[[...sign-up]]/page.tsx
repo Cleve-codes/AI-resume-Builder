@@ -33,7 +33,7 @@ export default function SignUpPage() {
               },
             }}
             signInUrl="/sign-in"
-            redirectUrl="/dashboard"
+            fallbackRedirectUrl="/dashboard"
           />
         </div>
       </div>

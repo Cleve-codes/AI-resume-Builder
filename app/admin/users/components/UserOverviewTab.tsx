@@ -1,9 +1,9 @@
 "use client";
 
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { User } from "../types";
 import { formatDate } from "../utils/formatDate";
-import { Badge } from "@/components/ui/badge";
 
 interface UserOverviewTabProps {
   user: User;
@@ -11,89 +11,99 @@ interface UserOverviewTabProps {
 
 export function UserOverviewTab({ user }: UserOverviewTabProps) {
   return (
-    <div className="space-y-4">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <Card>
-        <CardContent className="pt-6">
-          <h3 className="text-lg font-medium mb-4">User Information</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <p className="text-sm text-muted-foreground">Name</p>
-              <p className="font-medium">{user.name}</p>
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Email</p>
-              <p className="font-medium">{user.email}</p>
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Status</p>
-              <div className="flex items-center space-x-2">
-                <Badge 
-                  className={`
-                    ${user.status === 'active' ? 'bg-green-500 hover:bg-green-600' : ''}
-                    ${user.status === 'inactive' ? 'bg-amber-500 hover:bg-amber-600' : ''}
-                    ${user.status === 'suspended' ? 'bg-red-500 hover:bg-red-600' : ''}
-                    ${user.status === 'pending' ? 'bg-blue-500 hover:bg-blue-600' : ''}
-                  `}
-                >
-                  {user.status.charAt(0).toUpperCase() + user.status.slice(1)}
-                </Badge>
+        <CardContent className="p-4 sm:p-6">
+          <h4 className="text-sm font-medium mb-4">User Information</h4>
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <div className="text-xs text-muted-foreground">Full Name</div>
+                <div className="font-medium">{user.name}</div>
+              </div>
+              <div>
+                <div className="text-xs text-muted-foreground">Email</div>
+                <div className="font-medium">{user.email}</div>
+              </div>
+              <div>
+                <div className="text-xs text-muted-foreground">Status</div>
+                <div className="font-medium">
+                  <Badge className={getStatusColor(user.status)}>
+                    {user.status.charAt(0).toUpperCase() + user.status.slice(1)}
+                  </Badge>
+                </div>
+              </div>
+              <div>
+                <div className="text-xs text-muted-foreground">Role</div>
+                <div className="font-medium">{user.role}</div>
               </div>
             </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Role</p>
-              <Badge variant="outline" className="font-medium">
-                {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
-              </Badge>
-            </div>
           </div>
         </CardContent>
       </Card>
 
       <Card>
-        <CardContent className="pt-6">
-          <h3 className="text-lg font-medium mb-4">Account Details</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <p className="text-sm text-muted-foreground">Join Date</p>
-              <p className="font-medium">{formatDate(user.joinDate)}</p>
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Last Active</p>
-              <p className="font-medium">{formatDate(user.lastActive)}</p>
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Subscription Plan</p>
-              <Badge variant="secondary" className="font-medium">
-                {user.plan.charAt(0).toUpperCase() + user.plan.slice(1)}
-              </Badge>
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Total Resumes</p>
-              <p className="font-medium">{user.resumes}</p>
+        <CardContent className="p-4 sm:p-6">
+          <h4 className="text-sm font-medium mb-4">Account Details</h4>
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <div className="text-xs text-muted-foreground">Join Date</div>
+                <div className="font-medium">{formatDate(user.joinDate)}</div>
+              </div>
+              <div>
+                <div className="text-xs text-muted-foreground">Last Active</div>
+                <div className="font-medium">{formatDate(user.lastActive)}</div>
+              </div>
+              <div>
+                <div className="text-xs text-muted-foreground">Subscription Plan</div>
+                <div className="font-medium">{user.plan}</div>
+              </div>
+              <div>
+                <div className="text-xs text-muted-foreground">Total Resumes</div>
+                <div className="font-medium">{user.resumes.length}</div>
+              </div>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      <Card>
-        <CardContent className="pt-6">
-          <h3 className="text-lg font-medium mb-4">Security Information</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <p className="text-sm text-muted-foreground">2FA Enabled</p>
-              <Badge variant={user.role === 'admin' ? "default" : "secondary"} className="font-medium">
-                {user.role === 'admin' ? 'Yes' : 'No'}
-              </Badge>
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Email Verified</p>
-              <Badge variant="default" className="bg-green-500 hover:bg-green-600 font-medium">
-                Yes
-              </Badge>
+      <Card className="lg:col-span-2">
+        <CardContent className="p-4 sm:p-6">
+          <h4 className="text-sm font-medium mb-4">Security Information</h4>
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <div className="text-xs text-muted-foreground">Two-Factor Authentication</div>
+                <div className="font-medium">Disabled</div>
+              </div>
+              <div>
+                <div className="text-xs text-muted-foreground">Email Verification</div>
+                <div className="font-medium">Verified</div>
+              </div>
+              <div>
+                <div className="text-xs text-muted-foreground">Password Last Changed</div>
+                <div className="font-medium">30 days ago</div>
+              </div>
             </div>
           </div>
         </CardContent>
       </Card>
     </div>
   );
+}
+
+function getStatusColor(status: string) {
+  switch (status) {
+    case 'active':
+      return 'bg-green-500 hover:bg-green-600';
+    case 'inactive':
+      return 'bg-amber-500 hover:bg-amber-600';
+    case 'suspended':
+      return 'bg-red-500 hover:bg-red-600';
+    case 'pending':
+      return 'bg-blue-500 hover:bg-blue-600';
+    default:
+      return 'bg-gray-500 hover:bg-gray-600';
+  }
 } 

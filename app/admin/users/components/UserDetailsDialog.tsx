@@ -49,10 +49,10 @@ export function UserDetailsDialog({ user, open, onOpenChange }: UserDetailsDialo
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-4 sm:p-6">
         <DialogHeader>
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
               <Avatar className="h-14 w-14">
                 <AvatarImage src={user.avatar} alt={user.name} />
                 <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
@@ -60,7 +60,7 @@ export function UserDetailsDialog({ user, open, onOpenChange }: UserDetailsDialo
               <div>
                 <DialogTitle className="text-xl">{user.name}</DialogTitle>
                 <DialogDescription>{user.email}</DialogDescription>
-                <div className="flex items-center gap-2 mt-1">
+                <div className="flex flex-wrap items-center gap-2 mt-1">
                   <Badge className={getStatusColor(user.status)}>
                     {user.status.charAt(0).toUpperCase() + user.status.slice(1)}
                   </Badge>
@@ -73,21 +73,21 @@ export function UserDetailsDialog({ user, open, onOpenChange }: UserDetailsDialo
                 </div>
               </div>
             </div>
-            <div className="flex gap-2 self-end sm:self-auto">
+            <div className="flex gap-2 self-start sm:self-auto mt-2 sm:mt-0">
               <Button variant="outline" size="sm" className="flex items-center gap-1">
                 <Mail className="h-4 w-4" />
-                Email
+                <span className="hidden sm:inline">Email</span>
               </Button>
               <Button variant="default" size="sm" className="flex items-center gap-1">
                 <Edit className="h-4 w-4" />
-                Edit User
+                <span className="hidden sm:inline">Edit User</span>
               </Button>
             </div>
           </div>
         </DialogHeader>
 
         <Tabs defaultValue="overview" className="mt-6">
-          <TabsList className="grid grid-cols-4 mb-4">
+          <TabsList className="grid grid-cols-2 sm:grid-cols-4 mb-4">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="activity">Activity</TabsTrigger>
             <TabsTrigger value="resumes">Resumes</TabsTrigger>

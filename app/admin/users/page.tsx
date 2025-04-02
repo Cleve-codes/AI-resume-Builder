@@ -28,7 +28,8 @@ import {
   MoreHorizontal,
   Pencil,
   Lock, 
-  Trash
+  Trash,
+  User as UserIcon
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -109,22 +110,22 @@ export default function UsersPage() {
   };
 
   return (
-    <div className="container mx-auto py-6 space-y-6">
-      <div className="flex justify-between items-center">
+    <div className="container mx-auto py-4 sm:py-6 px-4 sm:px-6 space-y-4 sm:space-y-6">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Users</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Users</h1>
+          <p className="text-sm text-muted-foreground">
             Manage your application users and their access
           </p>
         </div>
-        <Button className="flex items-center">
+        <Button className="flex items-center w-full sm:w-auto justify-center">
           <Plus className="mr-2 h-4 w-4" />
           Add User
         </Button>
       </div>
 
       <Card>
-        <CardHeader>
+        <CardHeader className="p-4 sm:p-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <CardTitle>User Management</CardTitle>
@@ -132,8 +133,8 @@ export default function UsersPage() {
                 View and manage all users in the system
               </CardDescription>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="relative">
+            <div className="flex flex-col sm:flex-row items-center gap-2">
+              <div className="relative w-full sm:w-auto">
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Search users..."
@@ -142,41 +143,42 @@ export default function UsersPage() {
                   onChange={(e) => handleSearch(e.target.value)}
                 />
               </div>
-              <Button 
-                variant="outline" 
-                size="icon"
-                onClick={() => setIsFilterExpanded(!isFilterExpanded)}
-              >
-                <Filter className="h-4 w-4" />
-              </Button>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="icon">
-                    <MoreHorizontal className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    <Mail className="mr-2 h-4 w-4" />
-                    Email Selected
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Download className="mr-2 h-4 w-4" />
-                    Export Users
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+                <Button 
+                  variant="outline" 
+                  size="icon"
+                  onClick={() => setIsFilterExpanded(!isFilterExpanded)}
+                >
+                  <Filter className="h-4 w-4" />
+                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="icon">
+                      <MoreHorizontal className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem>
+                      <Mail className="mr-2 h-4 w-4" />
+                      Email Selected
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <Download className="mr-2 h-4 w-4" />
+                      Export Users
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
             </div>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0">
           {isFilterExpanded && (
             <div className="bg-muted p-4 rounded-md mb-4">
               <h3 className="font-medium mb-2">Filters</h3>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                {/* Filter controls would go here */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div>
                   <label className="text-sm font-medium mb-1 block">Status</label>
                   <Button variant="outline" className="w-full justify-between">
@@ -209,7 +211,8 @@ export default function UsersPage() {
             </div>
           )}
 
-          <div className="rounded-md border">
+          {/* Desktop Table View */}
+          <div className="rounded-md border hidden md:block">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -301,15 +304,97 @@ export default function UsersPage() {
             </Table>
           </div>
 
-          <div className="flex items-center justify-between mt-4">
+          {/* Mobile Card View */}
+          <div className="space-y-4 md:hidden">
+            {filteredUsers.length === 0 ? (
+              <div className="text-center py-8 border rounded-md">
+                <UserIcon className="h-10 w-10 text-muted-foreground mx-auto mb-2" />
+                <p className="text-muted-foreground">No users found.</p>
+              </div>
+            ) : (
+              filteredUsers.map((user) => (
+                <div 
+                  key={user.id} 
+                  className="border rounded-md p-4 space-y-3 cursor-pointer hover:bg-muted/50 transition-colors"
+                  onClick={() => handleUserClick(user)}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <Avatar className="h-10 w-10">
+                        <AvatarImage src={user.avatar} alt={user.name} />
+                        <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <div className="font-medium">{user.name}</div>
+                        <div className="text-sm text-muted-foreground">{user.email}</div>
+                      </div>
+                    </div>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                        <Button variant="ghost" size="icon">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={(e) => {
+                          e.stopPropagation();
+                          handleUserClick(user);
+                        }}>
+                          <Pencil className="mr-2 h-4 w-4" />
+                          Edit User
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
+                          <Mail className="mr-2 h-4 w-4" />
+                          Send Email
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
+                          <Lock className="mr-2 h-4 w-4" />
+                          Reset Password
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem 
+                          className="text-red-600"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <Trash className="mr-2 h-4 w-4" />
+                          Delete User
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <Badge className={getStatusColor(user.status)}>
+                      {user.status.charAt(0).toUpperCase() + user.status.slice(1)}
+                    </Badge>
+                    <Badge variant="outline">
+                      {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
+                    </Badge>
+                    <Badge variant="secondary">
+                      {user.plan.charAt(0).toUpperCase() + user.plan.slice(1)}
+                    </Badge>
+                  </div>
+                  <div className="grid grid-cols-2 text-sm gap-y-1">
+                    <div className="text-muted-foreground">Joined:</div>
+                    <div>{formatDate(user.joinDate)}</div>
+                    <div className="text-muted-foreground">Last Active:</div>
+                    <div>{getTimeAgo(user.lastActive)}</div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-4 gap-2">
             <div className="text-sm text-muted-foreground">
               Showing {filteredUsers.length} of {users.length} users
             </div>
             <div className="flex items-center space-x-2">
-              <Button variant="outline" size="sm" disabled>
+              <Button variant="outline" size="sm" disabled className="w-1/2 sm:w-auto">
                 Previous
               </Button>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" className="w-1/2 sm:w-auto">
                 Next
               </Button>
             </div>

@@ -61,7 +61,7 @@ export function UserOverviewTab({ user }: UserOverviewTabProps) {
               </div>
               <div>
                 <div className="text-xs text-muted-foreground">Total Resumes</div>
-                <div className="font-medium">{user.resumes.length}</div>
+                <div className="font-medium">{user.resumes}</div>
               </div>
             </div>
           </div>

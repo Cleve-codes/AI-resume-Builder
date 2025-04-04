@@ -62,7 +62,7 @@ export default function JobDetailsPage({ params }: { params: Promise<{ jobId: st
   }
 
   return (
-    <div className="mb-6">
+    <div className="mb-6 px-2 sm:px-0 max-w-full overflow-hidden">
       <Button
         variant="outline"
         className="gap-2 mb-6"

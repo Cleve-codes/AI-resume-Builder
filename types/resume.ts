@@ -56,6 +56,7 @@ export interface ResumeTemplate {
   isActive: boolean;
   isPremium: boolean;
   category: string;
+  tags?: string[];
   structure: {
     fontFamily: string;
     primaryColor: string;

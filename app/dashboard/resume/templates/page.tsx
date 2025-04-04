@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ResumeTemplate } from '@/types/resume';
+import { LayoutGrid, Briefcase, Sparkles, PaintBucket } from 'lucide-react';
 
 // Import the shared TemplateGallery component
 import { TemplateGallery } from '@/components/template-gallery';
@@ -59,54 +60,66 @@ export default function TemplatesPage() {
   }
 
   return (
-    <div className="flex min-h-screen bg-slate-50">
+    <div className="flex min-h-screen bg-slate-50 w-full overflow-hidden">
       {/* Main Content Area */}
-      <div className="flex-1">
+      <div className="flex-1 w-full max-w-full">
         {/* Page Content */}
-        <main className="p-6 lg:p-8 pt-20">
-          <div className="max-w-7xl mx-auto">
-            <div className="mb-6">
-              <h1 className="text-2xl font-bold tracking-tight">Resume Templates</h1>
-              <p className="text-muted-foreground">Choose a template that best suits your professional style.</p>
+        <main className="p-4 sm:p-6 lg:p-8 pt-16 sm:pt-20 w-full overflow-hidden">
+          <div className="max-w-7xl mx-auto w-full">
+            <div className="mb-4 sm:mb-6">
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Resume Templates</h1>
+              <p className="text-sm sm:text-base text-muted-foreground">Choose a template that best suits your professional style.</p>
             </div>
-            <div className="grid gap-8">
+            <div className="grid gap-4 sm:gap-8 w-full">
               <Tabs defaultValue="all" className="w-full">
-                <div className="flex items-center justify-between flex-wrap gap-4">
-                  <TabsList>
-                    <TabsTrigger value="all">All Templates</TabsTrigger>
-                    <TabsTrigger value="professional">Professional</TabsTrigger>
-                    <TabsTrigger value="modern">Modern</TabsTrigger>
-                    <TabsTrigger value="creative">Creative</TabsTrigger>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+                  <TabsList className="w-full sm:w-auto overflow-x-auto">
+                    <TabsTrigger value="all" className="px-3 py-1.5 sm:px-4 sm:py-2">
+                      <LayoutGrid className="h-4 w-4 sm:mr-2" />
+                      <span className="hidden sm:inline">All Templates</span>
+                    </TabsTrigger>
+                    <TabsTrigger value="professional" className="px-3 py-1.5 sm:px-4 sm:py-2">
+                      <Briefcase className="h-4 w-4 sm:mr-2" />
+                      <span className="hidden sm:inline">Professional</span>
+                    </TabsTrigger>
+                    <TabsTrigger value="modern" className="px-3 py-1.5 sm:px-4 sm:py-2">
+                      <Sparkles className="h-4 w-4 sm:mr-2" />
+                      <span className="hidden sm:inline">Modern</span>
+                    </TabsTrigger>
+                    <TabsTrigger value="creative" className="px-3 py-1.5 sm:px-4 sm:py-2">
+                      <PaintBucket className="h-4 w-4 sm:mr-2" />
+                      <span className="hidden sm:inline">Creative</span>
+                    </TabsTrigger>
                   </TabsList>
                   
                   {!isPremiumUser && (
-                    <div className="text-sm bg-amber-100 text-amber-800 px-3 py-1 rounded-full">
+                    <div className="text-xs sm:text-sm bg-amber-100 text-amber-800 px-3 py-1 rounded-full whitespace-nowrap">
                       Upgrade to Premium to unlock all templates
                     </div>
                   )}
                 </div>
                 
-                <TabsContent value="all" className="mt-6">
+                <TabsContent value="all" className="mt-4 sm:mt-6">
                   <TemplateGallery 
                     templates={templates} 
                     isPremiumUser={isPremiumUser}
                   />
                 </TabsContent>
                 
-                <TabsContent value="professional" className="mt-6">
+                <TabsContent value="professional" className="mt-4 sm:mt-6">
                   <TemplateGallery 
                     templates={templates.filter(t => t.category === 'professional')} 
                     isPremiumUser={isPremiumUser} 
                   />
                 </TabsContent>
                 
-                <TabsContent value="modern" className="mt-6">
+                <TabsContent value="modern" className="mt-4 sm:mt-6">
                   <TemplateGallery 
                     templates={templates.filter(t => t.category === 'modern')} 
                     isPremiumUser={isPremiumUser} 
                   />
                 </TabsContent>
-                <TabsContent value="creative" className="mt-6">
+                <TabsContent value="creative" className="mt-4 sm:mt-6">
                   <TemplateGallery 
                     templates={templates.filter(t => t.category === 'creative')} 
                     isPremiumUser={isPremiumUser} 

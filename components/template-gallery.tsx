@@ -8,8 +8,10 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Lock } from "lucide-react";
 import Image from 'next/image';
+import Link from 'next/link';
+import { Crown } from 'lucide-react';
 
 // Animation variants
 const containerVariants = {
@@ -344,15 +346,56 @@ export function TemplateGallery({
             key={template.id}
             variants={itemVariants}
           >
-            <TemplateCard
-              template={template}
-              isPremiumUser={isPremiumUser}
-              isSelected={selectedTemplate?.id === template.id}
-              onSelect={handleTemplateSelect}
-              onPreview={handlePreview}
-              showPreviewButton={showPreviewButton}
-              cardStyle={cardStyle}
-            />
+            <div 
+              className="bg-white rounded-lg border overflow-hidden shadow-sm transition-all hover:shadow-md flex flex-col"
+            >
+              <div className="relative aspect-[3/4] w-full overflow-hidden">
+                <Image
+                  src={template.thumbnail || '/templates/thumbnails/default.jpg'}
+                  alt={template.name}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                />
+                
+                {template.isPremium && !isPremiumUser && (
+                  <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                    <div className="bg-black/80 rounded-full p-3">
+                      <Lock className="h-6 w-6 text-amber-400" />
+                    </div>
+                  </div>
+                )}
+                
+                {template.isPremium && (
+                  <Badge className="absolute top-2 right-2 bg-amber-500 hover:bg-amber-600 text-white border-none flex items-center gap-1">
+                    <Crown className="h-3 w-3" /> Premium
+                  </Badge>
+                )}
+              </div>
+              
+              <div className="p-4 flex flex-col flex-1">
+                <h3 className="font-medium text-base mb-1">{template.name}</h3>
+                <p className="text-xs text-muted-foreground line-clamp-2 mb-3 flex-1">{template.description}</p>
+                
+                <div className="flex flex-wrap gap-2 mb-3">
+                  {template.tags && template.tags.map((tag: string, index: number) => (
+                    <Badge key={index} variant="secondary" className="text-xs font-normal">
+                      {tag}
+                    </Badge>
+                  ))}
+                </div>
+                
+                {template.isPremium && !isPremiumUser ? (
+                  <Button variant="outline" className="w-full text-sm">
+                    Upgrade to Use
+                  </Button>
+                ) : (
+                  <Link href={`/dashboard/resume/create?template=${template.id}`} className="w-full">
+                    <Button className="w-full text-sm">Use Template</Button>
+                  </Link>
+                )}
+              </div>
+            </div>
           </motion.div>
         ))}
       </motion.div>

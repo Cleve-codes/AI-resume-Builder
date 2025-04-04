@@ -62,19 +62,19 @@ export function ResumeListItem({ resume }: { resume: Resume }) {
   return (
     <Card className="overflow-hidden">
       <CardContent className="p-0">
-        <div className="flex items-center p-4">
-          <div className="h-12 w-12 bg-primary/10 rounded-md flex items-center justify-center mr-4">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-0 sm:items-center p-4">
+          <div className="h-12 w-12 bg-primary/10 rounded-md flex items-center justify-center sm:mr-4">
             <FileText className="h-6 w-6 text-primary" />
           </div>
 
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2">
-              <h3 className="font-medium truncate">{resume.title}</h3>
+            <div className="flex items-center gap-2 flex-wrap">
+              <h3 className="font-medium break-words">{resume.title}</h3>
               {getStatusBadge(resume.status)}
             </div>
-            <div className="flex items-center gap-4 text-sm text-muted-foreground">
-              <span>Template: {resume.template}</span>
-              <span>Updated: {formatDate(resume.lastUpdated)}</span>
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm text-muted-foreground">
+              <span className="truncate">Template: {resume.template}</span>
+              <span className="truncate">Updated: {formatDate(resume.lastUpdated)}</span>
               <span className="flex items-center">
                 Score:{" "}
                 <span
@@ -88,9 +88,9 @@ export function ResumeListItem({ resume }: { resume: Resume }) {
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <Link href={`/dashboard/resume/${resume.id}`}>
-              <Button variant="outline" size="sm" className="gap-1">
+          <div className="flex items-center justify-between sm:justify-end gap-2 mt-3 sm:mt-0">
+            <Link href={`/dashboard/resume/${resume.id}`} className="flex-1 sm:flex-initial">
+              <Button variant="outline" size="sm" className="gap-1 w-full sm:w-auto">
                 <Edit className="h-4 w-4" /> Edit
               </Button>
             </Link>

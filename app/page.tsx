@@ -111,7 +111,7 @@ export default function HomePage() {
               transition={{ duration: 0.6, delay: 0.6 }}
               className="flex flex-col sm:flex-row gap-4 justify-center"
             >
-              <Link href="/signup">
+              <Link href="/sign-up">
                 <Button
                   size="lg"
                   className="gap-2 bg-gradient-to-r from-[#E86C3A] to-[#F8B886] hover:opacity-90 transition-opacity text-black font-medium px-8 py-6"
